@@ -1,0 +1,18 @@
+ja:
+  error_failure_test: テスト通知が失敗しました。
+  issue_added_summary: Issue が作成されました。
+  issue_added_title: が作成されました。
+  issue_edited_summary: Issue が更新されました。
+  issue_edited_title: が更新されました。
+  label_msteams_destination: WebHook URL
+  label_msteams_format: メッセージ形式
+  msteams_card_action_open: 開く
+  msteams_notification: MSTeams 通知
+  notice_successful_test: テスト通知が成功しました。
+  permission_edit_msteams_notification: MSTeams 通知の編集
+  project_module_msteams_notification: MSTeams 通知
+  submit_msteams_send_test_notification: テスト通知を送信
+  wiki_added_summary: Wiki が作成されました。
+  wiki_added_title: が作成されました。
+  wiki_edited_summary: Wiki が更新されました。
+  wiki_edited_title: が更新されました。

@@ -1,0 +1,8 @@
+msteams_destinations_001:
+  project_id: 2
+  url:
+  format:
+msteams_destinations_002:
+  project_id: 5
+  url: https://localhost/test
+  format: AdaptiveCard

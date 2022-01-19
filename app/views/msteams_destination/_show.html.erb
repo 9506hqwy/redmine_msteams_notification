@@ -1,0 +1,32 @@
+<!-- プロジェクト設定のタブ表示 -->
+<%
+  destination = @project.msteams_destination || MsteamsDestination.new
+  test_url = url_for(controller: :msteams_destination, action: :test, project_id: @project.id)
+%>
+
+<%= form_tag({controller: :msteams_destination, action: :update, project_id: @project.id},
+             id: 'msteams_destination',
+             method: 'PUT') do %>
+
+<div class="box tabular">
+  <p>
+    <label><%= l(:label_msteams_destination) %>:</label>
+    <input name="msteams_destination" type="url" style="width: 100%" value="<%= destination.url %>" />
+  </p>
+  <p>
+    <label><%= l(:label_msteams_format) %>:</label>
+    <%= select_tag('msteams_format', options_for_select(["", "MessageCard", "AdaptiveCard"], destination.format)) %>
+  </p>
+</div>
+
+<div style="float:right">
+  <a rel="nofollow" data-method="post" href="<%= test_url %>">
+    <%= l(:submit_msteams_send_test_notification) %>
+  </a>
+</div>
+
+<p>
+  <%= submit_tag l(:button_save) %>
+</p>
+
+<% end %>

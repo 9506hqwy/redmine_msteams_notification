@@ -1,0 +1,18 @@
+en:
+  error_failure_test: Failed test notification.
+  issue_added_summary: Created new Issue.
+  issue_added_title: was created.
+  issue_edited_summary: Updated the Issue.
+  issue_edited_title: was updated.
+  label_msteams_destination: WebHook URL
+  label_msteams_format: Message Format
+  msteams_card_action_open: Open
+  msteams_notification: MSTeams Notification
+  notice_successful_test: Successed test notification.
+  permission_edit_msteams_notification: Edit MSTeams Notification
+  project_module_msteams_notification: MSTeams Notification
+  submit_msteams_send_test_notification: Send test notification
+  wiki_added_summary: Created new Wiki.
+  wiki_added_title: was created.
+  wiki_edited_summary: Updated the Wiki.
+  wiki_edited_title: was updated.
