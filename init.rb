@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_dependency 'adaptive_card'
-require_dependency 'hook_listener'
-require_dependency 'message_card'
-require_dependency 'projects_helper_patch'
-require_dependency 'project_patch'
+require_dependency 'msteams_notification/adaptive_card'
+require_dependency 'msteams_notification/hook_listener'
+require_dependency 'msteams_notification/message_card'
+require_dependency 'msteams_notification/projects_helper_patch'
+require_dependency 'msteams_notification/project_patch'
 
 Redmine::Plugin.register :redmine_msteams_notification do
   name 'Redmine MSTeams Notification plugin'
