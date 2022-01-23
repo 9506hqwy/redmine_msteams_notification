@@ -128,12 +128,13 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       msteams_format: ''
     }
 
-    project.reload
-
     assert_redirected_to "/projects/#{project.identifier}/settings/msteams_notification"
     assert_not_nil flash[:notice]
     assert_nil flash[:error]
+
+    project.reload
     assert_empty project.msteams_destination.url
+    assert_empty project.msteams_destination.format
   end
 
   def test_update_deny_permission
@@ -144,8 +145,6 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       msteams_destination: 'http://localhost/hook',
       msteams_format: 'MessageCard'
     }
-
-    project.reload
 
     assert_response 403
   end
@@ -159,11 +158,11 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       msteams_format: 'MessageCard'
     }
 
-    project.reload
-
     assert_redirected_to "/projects/#{project.identifier}/settings/msteams_notification"
     assert_not_nil flash[:notice]
     assert_nil flash[:error]
+
+    project.reload
     assert_equal 'http://localhost/hook', project.msteams_destination.url
     assert_equal 'MessageCard', project.msteams_destination.format
   end
