@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module RedmineMsteamsNotification
-  module ProjectPacth
+  module ProjectPatch
     def self.prepended(base)
       base.class_eval do
         has_one :msteams_destination, dependent: :destroy
@@ -10,4 +10,4 @@ module RedmineMsteamsNotification
   end
 end
 
-Project.prepend RedmineMsteamsNotification::ProjectPacth
+Project.prepend RedmineMsteamsNotification::ProjectPatch
