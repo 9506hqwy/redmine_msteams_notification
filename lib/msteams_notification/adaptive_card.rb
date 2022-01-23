@@ -6,7 +6,7 @@ require 'json'
 module RedmineMsteamsNotification
   # https://adaptivecards.io/
   class AdaptiveCard
-    def initialize(summary, title, text=nil)
+    def initialize(summary, title, text)
       @sections = []
       @mentions = []
       @actions = []
@@ -56,7 +56,7 @@ module RedmineMsteamsNotification
       key
     end
 
-    def add_section(title=nil, text=nil, facts=nil)
+    def add_section(title, text, facts)
       if text
         section = {}
         section[:type] = 'TextBlock'

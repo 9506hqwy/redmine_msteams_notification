@@ -16,11 +16,10 @@ module RedmineMsteamsNotification
 
       card  = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      message.add_open_uri(l(:msteams_card_action_open), issue_url)
-
       facts = new_facts(issue, message, issue.author)
-      message.add_section(nil, nil, facts)
 
+      message.add_open_uri(l(:msteams_card_action_open), issue_url)
+      message.add_section(nil, nil, facts)
       message.add_section(nil, issue_url, nil)
 
       Rails.logger.debug(message.get_json)
@@ -42,11 +41,10 @@ module RedmineMsteamsNotification
 
       card = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      message.add_open_uri(l(:msteams_card_action_open), journal_url)
-
       facts = new_facts(issue, message, journal.user)
-      message.add_section(nil, nil, facts)
 
+      message.add_open_uri(l(:msteams_card_action_open), journal_url)
+      message.add_section(nil, nil, facts)
       message.add_section(nil, journal.event_description, nil)
       message.add_section(nil, journal_url, nil)
 

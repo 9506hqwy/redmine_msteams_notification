@@ -5,7 +5,7 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class MessageCardTest < ActiveSupport::TestCase
   def test_new
-    m = RedmineMsteamsNotification::MessageCard.new 'summary', 'title'
+    m = RedmineMsteamsNotification::MessageCard.new('summary', 'title', nil)
     j = m.get_json
     assert_not_nil j
 
@@ -20,7 +20,7 @@ class MessageCardTest < ActiveSupport::TestCase
   end
 
   def test_add_open_uri
-    m = RedmineMsteamsNotification::MessageCard.new 'summary', 'title', 'text'
+    m = RedmineMsteamsNotification::MessageCard.new('summary', 'title', 'text')
     m.add_open_uri('uri', 'http://localhost')
     j = m.get_json
     assert_not_nil j
@@ -40,7 +40,7 @@ class MessageCardTest < ActiveSupport::TestCase
   end
 
   def test_add_section
-    m = RedmineMsteamsNotification::MessageCard.new 'summary', 'title'
+    m = RedmineMsteamsNotification::MessageCard.new('summary', 'title', nil)
     m.add_section('title', 'text', {a: 1, b: 2})
     j = m.get_json
     assert_not_nil j

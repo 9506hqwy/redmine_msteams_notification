@@ -8,7 +8,7 @@ class MsteamsDestinationController < ApplicationController
     user = User.current
 
     card  = destination.card_class
-    message = card.new('test', 'test notification')
+    message = card.new('test', 'test notification', nil)
 
     assigned_to = user.name
     if message.mention_available?

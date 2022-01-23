@@ -6,7 +6,7 @@ require 'json'
 module RedmineMsteamsNotification
   # https://docs.microsoft.com/ja-jp/outlook/actionable-messages/message-card-reference
   class MessageCard
-    def initialize(summary, title, text=nil)
+    def initialize(summary, title, text)
       @summary = summary
       @title = title
       @text = text
@@ -28,7 +28,7 @@ module RedmineMsteamsNotification
       @actions << action
     end
 
-    def add_section(title=nil, text=nil, facts=nil)
+    def add_section(title, text, facts)
       section = {}
       section[:startGroup] = true
       section[:title] = title.to_s if title
