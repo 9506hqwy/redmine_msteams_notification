@@ -112,7 +112,9 @@ module RedmineMsteamsNotification
       issue.custom_field_values.each do |cv|
         if cv.required?
           cf = cv.custom_field
-          facts[cf.name] = cv.value
+          if cf.roles.empty?
+            facts[cf.name] = cv.value
+          end
         end
       end
 
