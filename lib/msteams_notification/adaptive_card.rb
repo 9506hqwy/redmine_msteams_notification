@@ -108,15 +108,25 @@ module RedmineMsteamsNotification
     private
 
     def message
-      msg = {}
-      msg[:type] = 'AdaptiveCard'
-      msg[:body] = @sections
-      msg[:actions] = @actions
-      msg["$schema"] = 'http://adaptivecards.io/schema/adaptive-card.json'
-      msg[:version] = "1.3"
-      msg[:msteams] = {
+      # https://docs.microsoft.com/ja-jp/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using?tabs=PowerShell#send-adaptive-cards-using-an-incoming-webhook
+      # https://docs.microsoft.com/ja-jp/microsoftteams/platform/task-modules-and-cards/cards/cards-format?tabs=adaptive-md%2Cconnector-html#user-mention-in-incoming-webhook-with-adaptive-cards
+      content = {}
+      content[:type] = 'AdaptiveCard'
+      content[:body] = @sections
+      content[:actions] = @actions
+      content["$schema"] = 'http://adaptivecards.io/schema/adaptive-card.json'
+      content[:version] = "1.3"
+      content[:msteams] = {
         entities: @mentions
       }
+
+      attachment = {}
+      attachment[:contentType] = 'application/vnd.microsoft.card.adaptive'
+      attachment[:content] = content
+
+      msg = {}
+      msg[:type] = 'message'
+      msg[:attachments] = [attachment]
       msg
     end
   end
