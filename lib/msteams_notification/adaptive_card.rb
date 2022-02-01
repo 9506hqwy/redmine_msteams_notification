@@ -117,7 +117,8 @@ module RedmineMsteamsNotification
       content["$schema"] = 'http://adaptivecards.io/schema/adaptive-card.json'
       content[:version] = "1.3"
       content[:msteams] = {
-        entities: @mentions
+        entities: @mentions,
+        width: 'Full',
       }
 
       attachment = {}
