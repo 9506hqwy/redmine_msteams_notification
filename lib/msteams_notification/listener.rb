@@ -33,6 +33,7 @@ module RedmineMsteamsNotification
       return unless enable?(issue.project)
 
       journal = context[:journal]
+      return if journal.private_notes?
 
       summary = l(:issue_edited_summary)
       title = sprintf('#%d %s (%s)', issue.id, l(:issue_edited_title), journal.user.name)
