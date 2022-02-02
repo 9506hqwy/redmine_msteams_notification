@@ -91,12 +91,12 @@ module RedmineMsteamsNotification
 
     def new_facts(issue, message, reporter)
       author = issue.author.name
-      if message.mention_available? && (issue.author != reporter) && (issue.author != issue.assigned_to)
+      if message.mention_available? && (issue.author != reporter) && (issue.author != issue.assigned_to) && issue.author.active?
         author = message.add_mention_for(issue.author)
       end
 
       assigned_to = issue.assigned_to.name if issue.assigned_to
-      if issue.assigned_to && message.mention_available? && (issue.assigned_to != reporter)
+      if issue.assigned_to && message.mention_available? && (issue.assigned_to != reporter) && issue.assigned_to.active?
         assigned_to = message.add_mention_for(issue.assigned_to)
       end
 
