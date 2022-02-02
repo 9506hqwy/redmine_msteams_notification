@@ -20,7 +20,7 @@ module RedmineMsteamsNotification
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
       message.add_section(nil, nil, facts)
-      message.add_section(nil, issue_url, nil)
+      message.add_section(nil, link_to(issue_url), nil)
 
       Rails.logger.debug(message.get_json)
 
@@ -47,7 +47,7 @@ module RedmineMsteamsNotification
       message.add_open_uri(l(:msteams_card_action_open), journal_url)
       message.add_section(nil, nil, facts)
       message.add_section(nil, journal.event_description, nil)
-      message.add_section(nil, journal_url, nil)
+      message.add_section(nil, link_to(journal_url), nil)
 
       Rails.logger.debug(message.get_json)
 
@@ -74,7 +74,7 @@ module RedmineMsteamsNotification
       message = card.new(summary, title, text)
       message.add_open_uri(l(:msteams_card_action_open), page_url)
       message.add_section(nil, nil, facts)
-      message.add_section(nil, page_url, nil)
+      message.add_section(nil, link_to(page_url), nil)
 
       Rails.logger.debug(message.get_json)
 
@@ -88,6 +88,10 @@ module RedmineMsteamsNotification
       return false unless project.msteams_destination
 
       return project.msteams_destination.url.present?
+    end
+
+    def link_to(url)
+      "[#{url}](#{url})"
     end
 
     def new_facts(issue, message, reporter)
