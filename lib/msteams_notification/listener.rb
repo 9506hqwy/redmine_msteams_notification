@@ -94,14 +94,29 @@ module RedmineMsteamsNotification
       "[#{url}](#{url})"
     end
 
+    def mention_assigned_to?(issue, reporter)
+      return false unless issue.assigned_to
+      return false if issue.assigned_to.is_a?(Group)
+      return false if issue.assigned_to == reporter
+
+      issue.assigned_to.active?
+    end
+
+    def mention_author?(issue, reporter)
+      return false if issue.author == reporter
+      return false if issue.author == issue.assigned_to
+
+      issue.author.active?
+    end
+
     def new_facts(issue, message, reporter)
       author = issue.author.name
-      if message.mention_available? && (issue.author != reporter) && (issue.author != issue.assigned_to) && issue.author.active?
+      if message.mention_available? && mention_author?(issue, reporter)
         author = message.add_mention_for(issue.author)
       end
 
       assigned_to = issue.assigned_to.name if issue.assigned_to
-      if issue.assigned_to && message.mention_available? && (issue.assigned_to != reporter) && issue.assigned_to.active?
+      if message.mention_available? && mention_assigned_to?(issue, reporter)
         assigned_to = message.add_mention_for(issue.assigned_to)
       end
 
