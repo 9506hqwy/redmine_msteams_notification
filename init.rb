@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_dependency 'msteams_notification/card'
 require_dependency 'msteams_notification/adaptive_card'
 require_dependency 'msteams_notification/listener'
 require_dependency 'msteams_notification/message_card'

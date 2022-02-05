@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
-require 'net/http'
-require 'json'
-
 module RedmineMsteamsNotification
   # https://adaptivecards.io/
-  class AdaptiveCard
+  class AdaptiveCard < Card
     def initialize(summary, title, text)
+      super()
       @sections = []
       @mentions = []
       @actions = []
@@ -81,32 +79,8 @@ module RedmineMsteamsNotification
       end
     end
 
-    def get_json
-      JSON.generate(message)
-    end
-
     def mention_available?
       true
-    end
-
-    def send(url, skip_ssl_verify)
-      uri = URI.parse(url)
-
-      request = Net::HTTP::Post.new(uri.request_uri)
-      request.content_type = 'application/json'
-      request.body = get_json
-
-      conn = Net::HTTP.new(uri.host, uri.port)
-      conn.use_ssl = true
-      if skip_ssl_verify
-        conn.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      else
-        conn.verify_mode = OpenSSL::SSL::VERIFY_PEER
-      end
-
-      conn.start do |http|
-        http.request(request)
-      end
     end
 
     private
