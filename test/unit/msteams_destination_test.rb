@@ -3,7 +3,8 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class MsteamsDestinationTest < ActiveSupport::TestCase
-  fixtures :projects,
+  fixtures :custom_fields,
+           :projects,
            :msteams_destinations
 
   def test_create
@@ -14,6 +15,7 @@ class MsteamsDestinationTest < ActiveSupport::TestCase
     d.url = nil
     d.format = 'AdaptiveCard'
     d.skip_ssl_verify = true
+    d.mention_id_field_id = nil
     d.save!
 
     d.reload
@@ -21,6 +23,7 @@ class MsteamsDestinationTest < ActiveSupport::TestCase
     assert_nil d.url
     assert_equal 'AdaptiveCard', d.format
     assert_equal true, d.skip_ssl_verify
+    assert_nil d.mention_id_field_id
     assert_equal RedmineMsteamsNotification::AdaptiveCard, d.card_class
   end
 
@@ -31,12 +34,14 @@ class MsteamsDestinationTest < ActiveSupport::TestCase
     d.url = 'http://localhost/hooks'
     d.format = 'MessageCard'
     d.skip_ssl_verify = false
+    d.mention_id_field_id = 1
     d.save!
 
     d.reload
     assert_equal 'http://localhost/hooks', d.url
     assert_equal 'MessageCard', d.format
     assert_equal false, d.skip_ssl_verify
+    assert_equal 1, d.mention_id_field_id
     assert_equal RedmineMsteamsNotification::MessageCard, d.card_class
   end
 end

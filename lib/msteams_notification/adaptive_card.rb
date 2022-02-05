@@ -48,9 +48,12 @@ module RedmineMsteamsNotification
       @mentions << mention
     end
 
-    def add_mention_for(user)
+    def add_mention_for(project, user)
+      id = user.msteams_mention_id(project.msteams_destination)
+      return nil if id.blank?
+
       key = "<at>#{user.login}</at>"
-      add_mention(key, user.mail, user.name)
+      add_mention(key, id, user.name)
       key
     end
 

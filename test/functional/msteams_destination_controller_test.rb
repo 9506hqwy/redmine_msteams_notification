@@ -14,7 +14,8 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
   include Redmine::I18n
   include WebMock::API
 
-  fixtures :email_addresses,
+  fixtures :custom_fields,
+           :email_addresses,
            :member_roles,
            :members,
            :projects,
@@ -129,6 +130,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       msteams_destination: '',
       msteams_format: '',
       # msteams_skip_ssl_verify: false,
+      msteams_mention_id_field_id: '',
     }
 
     assert_redirected_to "/projects/#{project.identifier}/settings/msteams_notification"
@@ -139,6 +141,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
     assert_empty project.msteams_destination.url
     assert_empty project.msteams_destination.format
     assert_equal false, project.msteams_destination.skip_ssl_verify
+    assert_nil project.msteams_destination.mention_id_field_id
   end
 
   def test_update_deny_permission
@@ -149,6 +152,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       msteams_destination: 'http://localhost/hook',
       msteams_format: 'MessageCard',
       # msteams_skip_ssl_verify: false,
+      msteams_mention_id_field_id: '',
     }
 
     assert_response 403
@@ -162,6 +166,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       msteams_destination: 'http://localhost/hook',
       msteams_format: 'MessageCard',
       msteams_skip_ssl_verify: true,
+      msteams_mention_id_field_id: '1',
     }
 
     assert_redirected_to "/projects/#{project.identifier}/settings/msteams_notification"
@@ -172,5 +177,6 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
     assert_equal 'http://localhost/hook', project.msteams_destination.url
     assert_equal 'MessageCard', project.msteams_destination.format
     assert_equal true, project.msteams_destination.skip_ssl_verify
+    assert_equal 1, project.msteams_destination.mention_id_field_id
   end
 end

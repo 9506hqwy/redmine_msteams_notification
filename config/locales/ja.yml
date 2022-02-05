@@ -1,11 +1,15 @@
 ja:
   error_failure_test: テスト通知が失敗しました。
+  hint_msteams_mention_id_field: |
+    メンションするときの各ユーザの Azure AD オブジェクト ID または UPN を指定するカスタムフィールドを設定します。
+    省略した場合はメールアドレスを使用します。
   issue_added_summary: Issue が作成されました。
   issue_added_title: が作成されました。
   issue_edited_summary: Issue が更新されました。
   issue_edited_title: が更新されました。
   label_msteams_destination: WebHook URL
   label_msteams_format: メッセージ形式
+  label_msteams_mention_id_field: オブジェクト ID または UPN
   label_msteams_skip_ssl_verify: SSLサーバ証明書の検証をスキップ
   msteams_card_action_open: 開く
   msteams_notification: MSTeams 通知

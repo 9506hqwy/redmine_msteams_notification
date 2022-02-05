@@ -2,6 +2,8 @@
 <%
   destination = @project.msteams_destination || MsteamsDestination.new
   test_url = url_for(controller: :msteams_destination, action: :test, project_id: @project.id)
+
+  mention_id_fields = CustomField.where(type: :UserCustomField, field_format: :string)
 %>
 
 <%= form_tag({controller: :msteams_destination, action: :update, project_id: @project.id},
@@ -24,6 +26,15 @@
     <%= check_box_tag('msteams_skip_ssl_verify',
                       true,
                       destination.skip_ssl_verify) %>
+  </p>
+  <p>
+    <label><%= l(:label_msteams_mention_id_field) %>:</label>
+    <%= select_tag('msteams_mention_id_field_id',
+                   options_for_select(mention_id_fields.map{ |f| [f.name, f.id] }, destination.mention_id_field_id),
+                   include_blank: true) %>
+    <p>
+      <%= l(:hint_msteams_mention_id_field) %>
+    </p>
   </p>
 </div>
 
