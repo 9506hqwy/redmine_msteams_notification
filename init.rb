@@ -11,7 +11,7 @@ Redmine::Plugin.register :redmine_msteams_notification do
   name 'Redmine MSTeams Notification plugin'
   author '9506hqwy'
   description 'This is a MSTeams notification plugin for Redmine'
-  version '0.2.0'
+  version '0.3.0'
   url 'https://github.com/9506hqwy/redmine_msteams_notification'
   author_url 'https://github.com/9506hqwy'
 
