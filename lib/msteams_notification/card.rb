@@ -21,7 +21,7 @@ module RedmineMsteamsNotification
       request.body = get_json
 
       conn = Net::HTTP.new(uri.host, uri.port)
-      conn.use_ssl = true
+      conn.use_ssl = uri.scheme == 'https'
       if skip_ssl_verify
         conn.verify_mode = OpenSSL::SSL::VERIFY_NONE
       else
