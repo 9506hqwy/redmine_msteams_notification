@@ -24,7 +24,7 @@ module RedmineMsteamsNotification
 
       Rails.logger.debug(message.get_json)
 
-      send_message(message, issue.project.msteams_destination.url)
+      send_message(message, issue.project.msteams_destination)
     end
 
     def controller_issues_edit_after_save(context)
@@ -51,7 +51,7 @@ module RedmineMsteamsNotification
 
       Rails.logger.debug(message.get_json)
 
-      send_message(message, issue.project.msteams_destination.url)
+      send_message(message, issue.project.msteams_destination)
     end
 
     def controller_wiki_edit_after_save(context)
@@ -78,7 +78,7 @@ module RedmineMsteamsNotification
 
       Rails.logger.debug(message.get_json)
 
-      send_message(message, page.project.msteams_destination.url)
+      send_message(message, page.project.msteams_destination)
     end
 
     private
@@ -145,8 +145,8 @@ module RedmineMsteamsNotification
       url_for(act.event_url(protocol: Setting.protocol, host: Setting.host_name))
     end
 
-    def send_message(message, url)
-      message.send(url)
+    def send_message(message, destination)
+      message.send(destination.url, destination.skip_ssl_verify)
     rescue => e
       Rails.logger.error(e)
     end

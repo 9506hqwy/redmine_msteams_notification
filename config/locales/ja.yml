@@ -6,6 +6,7 @@ ja:
   issue_edited_title: が更新されました。
   label_msteams_destination: WebHook URL
   label_msteams_format: メッセージ形式
+  label_msteams_skip_ssl_verify: SSLサーバ証明書の検証をスキップ
   msteams_card_action_open: 開く
   msteams_notification: MSTeams 通知
   notice_successful_test: テスト通知が成功しました。

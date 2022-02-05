@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 if ActiveRecord::VERSION::MAJOR >= 5
-  Migration = ActiveRecord::Migration[4.2]
+  migration = ActiveRecord::Migration[4.2]
 else
-  Migration = ActiveRecord::Migration
+  migration = ActiveRecord::Migration
 end
 
-class CreateMsteamsDestinations < Migration
+class CreateMsteamsDestinations < migration
   def change
     create_table :msteams_destinations do |t|
       t.belongs_to :project, null: false, foreign_key: true

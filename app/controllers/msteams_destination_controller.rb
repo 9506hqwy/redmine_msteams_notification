@@ -23,7 +23,7 @@ class MsteamsDestinationController < ApplicationController
 
     begin
       if destination.url.present?
-        message.send(destination.url)
+        message.send(destination.url, destination.skip_ssl_verify)
         flash[:notice] = l(:notice_successful_test)
       end
     rescue => e
@@ -38,6 +38,7 @@ class MsteamsDestinationController < ApplicationController
     destination.project = @project
     destination.url = params[:msteams_destination]
     destination.format = params[:msteams_format]
+    destination.skip_ssl_verify = params[:msteams_skip_ssl_verify].present?
 
     if destination.save
       flash[:notice] = l(:notice_successful_update)

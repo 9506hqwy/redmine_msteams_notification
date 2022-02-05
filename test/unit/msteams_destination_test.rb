@@ -13,12 +13,14 @@ class MsteamsDestinationTest < ActiveSupport::TestCase
     d.project = p
     d.url = nil
     d.format = 'AdaptiveCard'
+    d.skip_ssl_verify = true
     d.save!
 
     d.reload
     assert_equal p.id, d.project_id
     assert_nil d.url
     assert_equal 'AdaptiveCard', d.format
+    assert_equal true, d.skip_ssl_verify
     assert_equal RedmineMsteamsNotification::AdaptiveCard, d.card_class
   end
 
@@ -28,11 +30,13 @@ class MsteamsDestinationTest < ActiveSupport::TestCase
     d = p.msteams_destination
     d.url = 'http://localhost/hooks'
     d.format = 'MessageCard'
+    d.skip_ssl_verify = false
     d.save!
 
     d.reload
     assert_equal 'http://localhost/hooks', d.url
     assert_equal 'MessageCard', d.format
+    assert_equal false, d.skip_ssl_verify
     assert_equal RedmineMsteamsNotification::MessageCard, d.card_class
   end
 end

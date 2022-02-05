@@ -89,7 +89,7 @@ module RedmineMsteamsNotification
       true
     end
 
-    def send(url)
+    def send(url, skip_ssl_verify)
       uri = URI.parse(url)
 
       request = Net::HTTP::Post.new(uri.request_uri)
@@ -98,7 +98,11 @@ module RedmineMsteamsNotification
 
       conn = Net::HTTP.new(uri.host, uri.port)
       conn.use_ssl = true
-      conn.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      if skip_ssl_verify
+        conn.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      else
+        conn.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      end
 
       conn.start do |http|
         http.request(request)

@@ -6,6 +6,7 @@ en:
   issue_edited_title: was updated.
   label_msteams_destination: WebHook URL
   label_msteams_format: Message Format
+  label_msteams_skip_ssl_verify: Skip SSL certificate verification
   msteams_card_action_open: Open
   msteams_notification: MSTeams Notification
   notice_successful_test: Successed test notification.

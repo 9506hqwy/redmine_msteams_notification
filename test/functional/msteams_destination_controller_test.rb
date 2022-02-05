@@ -37,6 +37,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
 
     project.msteams_destination.url = 'https://localhost/'
     project.msteams_destination.format = 'AdaptiveCard'
+    project.msteams_destination.skip_ssl_verify = false
     project.msteams_destination.save!
 
     stub_request(:post, 'https://localhost/')
@@ -60,6 +61,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
 
     project.msteams_destination.url = 'https://localhost/'
     project.msteams_destination.format = 'MessageCard'
+    project.msteams_destination.skip_ssl_verify = true
     project.msteams_destination.save!
 
     stub_request(:post, 'https://localhost/')
@@ -125,7 +127,8 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
     put :update, params: {
       project_id: project.id,
       msteams_destination: '',
-      msteams_format: ''
+      msteams_format: '',
+      # msteams_skip_ssl_verify: false,
     }
 
     assert_redirected_to "/projects/#{project.identifier}/settings/msteams_notification"
@@ -135,6 +138,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
     project.reload
     assert_empty project.msteams_destination.url
     assert_empty project.msteams_destination.format
+    assert_equal false, project.msteams_destination.skip_ssl_verify
   end
 
   def test_update_deny_permission
@@ -143,7 +147,8 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
     put :update, params: {
       project_id: project.id,
       msteams_destination: 'http://localhost/hook',
-      msteams_format: 'MessageCard'
+      msteams_format: 'MessageCard',
+      # msteams_skip_ssl_verify: false,
     }
 
     assert_response 403
@@ -155,7 +160,8 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
     put :update, params: {
       project_id: project.id,
       msteams_destination: 'http://localhost/hook',
-      msteams_format: 'MessageCard'
+      msteams_format: 'MessageCard',
+      msteams_skip_ssl_verify: true,
     }
 
     assert_redirected_to "/projects/#{project.identifier}/settings/msteams_notification"
@@ -165,5 +171,6 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
     project.reload
     assert_equal 'http://localhost/hook', project.msteams_destination.url
     assert_equal 'MessageCard', project.msteams_destination.format
+    assert_equal true, project.msteams_destination.skip_ssl_verify
   end
 end

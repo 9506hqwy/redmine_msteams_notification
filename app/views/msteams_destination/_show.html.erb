@@ -8,7 +8,7 @@
              id: 'msteams_destination',
              method: 'PUT') do %>
 
-<div class="box tabular">
+<div class="box tabular settings">
   <p>
     <label><%= l(:label_msteams_destination) %>:</label>
     <input name="msteams_destination" type="url" style="width: 100%" value="<%= destination.url %>" />
@@ -18,6 +18,12 @@
     <%= select_tag('msteams_format',
                    options_for_select(["MessageCard", "AdaptiveCard"], destination.format),
                    include_blank: true) %>
+  </p>
+  <p>
+    <label><%= l(:label_msteams_skip_ssl_verify) %>:</label>
+    <%= check_box_tag('msteams_skip_ssl_verify',
+                      true,
+                      destination.skip_ssl_verify) %>
   </p>
 </div>
 
