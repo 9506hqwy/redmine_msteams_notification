@@ -11,7 +11,7 @@ class MsteamsDestinationController < ApplicationController
     message = card.new('test', 'test notification', nil)
 
     assigned_to = user.name
-    if message.mention_available?
+    if message.mention_available? && user.msteams_mentioned_enable?(@project.msteams_destination)
       key = message.add_mention_for(@project, user)
       assigned_to = key if key
     end
@@ -41,6 +41,7 @@ class MsteamsDestinationController < ApplicationController
     destination.format = params[:msteams_format]
     destination.skip_ssl_verify = params[:msteams_skip_ssl_verify].present?
     destination.mention_id_field_id = params[:msteams_mention_id_field_id]
+    destination.user_mentioned_field_id = params[:msteams_user_mentioned_field_id]
 
     if destination.save
       flash[:notice] = l(:notice_successful_update)

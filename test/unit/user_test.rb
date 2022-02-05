@@ -8,6 +8,65 @@ class UserTest < ActiveSupport::TestCase
            :users,
            :msteams_destinations
 
+  def test_msteams_user_mentioned_cf_defalt_1
+    u = users(:users_001)
+    s = msteams_destinations(:msteams_destinations_002)
+
+    c = custom_fields(:custom_fields_005)
+    c.default_value = "1"
+    c.save!
+
+    assert u.msteams_mentioned_enable?(s)
+  end
+
+  def test_msteams_user_mentioned_cf_defalt_0
+    u = users(:users_001)
+    s = msteams_destinations(:msteams_destinations_002)
+
+    c = custom_fields(:custom_fields_005)
+    c.default_value = "0"
+    c.save!
+
+    assert_not u.msteams_mentioned_enable?(s)
+  end
+
+  def test_msteams_user_mentioned_cf_value_1
+    u = users(:users_001)
+    s = msteams_destinations(:msteams_destinations_002)
+
+    v = CustomValue.new
+    v.customized = u
+    v.custom_field = s.user_mentioned_field
+    v.value = '1'
+    v.save!
+
+    assert u.msteams_mentioned_enable?(s)
+  end
+
+  def test_msteams_user_mentioned_cf_value_0
+    u = users(:users_001)
+    s = msteams_destinations(:msteams_destinations_002)
+
+    v = CustomValue.new
+    v.customized = u
+    v.custom_field = s.user_mentioned_field
+    v.value = '0'
+    v.save!
+
+    assert_not u.msteams_mentioned_enable?(s)
+  end
+
+  def test_msteams_user_mentioned_empty
+    u = users(:users_001)
+    s = msteams_destinations(:msteams_destinations_001)
+    assert u.msteams_mentioned_enable?(s)
+  end
+
+  def test_msteams_user_mentioned_nil
+    u = users(:users_001)
+    assert_not u.msteams_mentioned_enable?(nil)
+  end
+
   def test_msteams_mentin_id_cf_nil
     u = users(:users_001)
     s = msteams_destinations(:msteams_destinations_002)

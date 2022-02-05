@@ -3,6 +3,9 @@ en:
   hint_msteams_mention_id_field: |
     Set a custom field that specifies the Azure AD object ID or UPN for each user when mentioning.
     If omitted, the email address will be used.
+  hint_msteams_user_mentioned_field: |
+    Set a custom field that specifies whether mentions are enabled for each user.
+    If omitted, it be enabled.
   issue_added_summary: Created new Issue.
   issue_added_title: was created.
   issue_edited_summary: Updated the Issue.
@@ -11,6 +14,7 @@ en:
   label_msteams_format: Message Format
   label_msteams_mention_id_field: Object ID or UPN
   label_msteams_skip_ssl_verify: Skip SSL certificate verification
+  label_msteams_user_mentioned_field: User Preference
   msteams_card_action_open: Open
   msteams_notification: MSTeams Notification
   notice_successful_test: Successed test notification.

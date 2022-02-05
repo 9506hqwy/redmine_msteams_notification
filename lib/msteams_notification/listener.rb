@@ -98,6 +98,7 @@ module RedmineMsteamsNotification
       return false unless issue.assigned_to
       return false if issue.assigned_to.is_a?(Group)
       return false if issue.assigned_to == reporter
+      return false unless issue.assigned_to.msteams_mentioned_enable?(issue.project.msteams_destination)
 
       issue.assigned_to.active?
     end
@@ -105,6 +106,7 @@ module RedmineMsteamsNotification
     def mention_author?(issue, reporter)
       return false if issue.author == reporter
       return false if issue.author == issue.assigned_to
+      return false unless issue.author.msteams_mentioned_enable?(issue.project.msteams_destination)
 
       issue.author.active?
     end

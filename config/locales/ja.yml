@@ -3,6 +3,9 @@ ja:
   hint_msteams_mention_id_field: |
     メンションするときの各ユーザの Azure AD オブジェクト ID または UPN を指定するカスタムフィールドを設定します。
     省略した場合はメールアドレスを使用します。
+  hint_msteams_user_mentioned_field: |
+    各ユーザにメンションを有効にするかどうかを指定するカスタムフィールドを設定します。
+    省略した場合は有効となります。
   issue_added_summary: Issue が作成されました。
   issue_added_title: が作成されました。
   issue_edited_summary: Issue が更新されました。
@@ -11,6 +14,7 @@ ja:
   label_msteams_format: メッセージ形式
   label_msteams_mention_id_field: オブジェクト ID または UPN
   label_msteams_skip_ssl_verify: SSLサーバ証明書の検証をスキップ
+  label_msteams_user_mentioned_field: ユーザごとのメンション設定
   msteams_card_action_open: 開く
   msteams_notification: MSTeams 通知
   notice_successful_test: テスト通知が成功しました。

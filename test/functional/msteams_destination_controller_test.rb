@@ -131,6 +131,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       msteams_format: '',
       # msteams_skip_ssl_verify: false,
       msteams_mention_id_field_id: '',
+      msteams_user_mentioned_field_id: '',
     }
 
     assert_redirected_to "/projects/#{project.identifier}/settings/msteams_notification"
@@ -153,6 +154,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       msteams_format: 'MessageCard',
       # msteams_skip_ssl_verify: false,
       msteams_mention_id_field_id: '',
+      msteams_user_mentioned_field_id: '',
     }
 
     assert_response 403
@@ -167,6 +169,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       msteams_format: 'MessageCard',
       msteams_skip_ssl_verify: true,
       msteams_mention_id_field_id: '1',
+      msteams_user_mentioned_field_id: '2',
     }
 
     assert_redirected_to "/projects/#{project.identifier}/settings/msteams_notification"
@@ -178,5 +181,6 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
     assert_equal 'MessageCard', project.msteams_destination.format
     assert_equal true, project.msteams_destination.skip_ssl_verify
     assert_equal 1, project.msteams_destination.mention_id_field_id
+    assert_equal 2, project.msteams_destination.user_mentioned_field_id
   end
 end
