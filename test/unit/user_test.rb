@@ -67,7 +67,7 @@ class UserTest < ActiveSupport::TestCase
     assert_not u.msteams_mentioned_enable?(nil)
   end
 
-  def test_msteams_mentin_id_cf_nil
+  def test_msteams_mention_id_cf_nil
     u = users(:users_001)
     s = msteams_destinations(:msteams_destinations_002)
 
@@ -75,7 +75,7 @@ class UserTest < ActiveSupport::TestCase
     assert_nil id
   end
 
-  def test_msteams_mentin_id_cf_value
+  def test_msteams_mention_id_cf_value
     u = users(:users_001)
     s = msteams_destinations(:msteams_destinations_002)
 
@@ -89,7 +89,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 'test', id
   end
 
-  def test_msteams_mentin_id_cf_value_nil
+  def test_msteams_mention_id_cf_value_nil
     u = users(:users_001)
     s = msteams_destinations(:msteams_destinations_002)
 
@@ -103,14 +103,14 @@ class UserTest < ActiveSupport::TestCase
     assert_nil id
   end
 
-  def test_msteams_mentin_id_mail
+  def test_msteams_mention_id_mail
     u = users(:users_001)
     s = msteams_destinations(:msteams_destinations_001)
     id = u.msteams_mention_id(s)
     assert_equal 'admin@somenet.foo', id
   end
 
-  def test_msteams_mentin_id_nil
+  def test_msteams_mention_id_nil
     u = users(:users_001)
     id = u.msteams_mention_id(nil)
     assert_equal 'admin@somenet.foo', id
