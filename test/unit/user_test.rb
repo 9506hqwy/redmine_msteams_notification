@@ -8,7 +8,7 @@ class UserTest < ActiveSupport::TestCase
            :users,
            :msteams_destinations
 
-  def test_msteams_user_mentioned_cf_defalt_1
+  def test_msteams_user_mentioned_cf_default_1
     u = users(:users_001)
     s = msteams_destinations(:msteams_destinations_002)
 
@@ -19,7 +19,7 @@ class UserTest < ActiveSupport::TestCase
     assert u.msteams_mentioned_enable?(s)
   end
 
-  def test_msteams_user_mentioned_cf_defalt_0
+  def test_msteams_user_mentioned_cf_default_0
     u = users(:users_001)
     s = msteams_destinations(:msteams_destinations_002)
 
