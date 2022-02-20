@@ -227,7 +227,19 @@ module RedmineMsteamsNotification
     end
 
     def object_url(act)
-      url_for(act.event_url(protocol: Setting.protocol, host: Setting.host_name))
+      options = { protocol: Setting.protocol }
+      if Setting.host_name.to_s =~ /\A(https?\:\/\/)?(.+?)(\:(\d+))?(\/.+)?\z/i
+        host, port, path = $2, $4, $5
+        options.merge!({
+                         host: host,
+                         port: port,
+                         script_name: path,
+                       })
+      else
+        options[:host] = Setting.host_name
+      end
+
+      url_for(act.event_url(options))
     end
 
     def send_message(message, destination)
