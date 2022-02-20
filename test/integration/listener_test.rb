@@ -67,7 +67,7 @@ class HookListenerTest < Redmine::IntegrationTest
     assert_requested(hook)
   end
 
-  def test_issue_edit
+  def test_issue_edit_subject
     hook = stub_request(:post, 'https://localhost/test')
 
     log_user('admin', 'admin')
@@ -77,6 +77,90 @@ class HookListenerTest < Redmine::IntegrationTest
       params: {
         issue: {
           subject: "test issue"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_edit_assigned_to_id
+    hook = stub_request(:post, 'https://localhost/test')
+
+    issue = issues(:issues_006)
+    issue.assigned_to_id = 1
+    issue.save!
+
+    log_user('admin', 'admin')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          assigned_to_id: "8"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_edit_project_id
+    hook = stub_request(:post, 'https://localhost/test')
+
+    log_user('admin', 'admin')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          project_id: "1"
+        }
+      })
+
+    assert_not_requested(hook)
+  end
+
+  def test_issue_edit_tracker_id
+    hook = stub_request(:post, 'https://localhost/test')
+
+    log_user('admin', 'admin')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          tracker_id: "2"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_edit_priority_id
+    hook = stub_request(:post, 'https://localhost/test')
+
+    log_user('admin', 'admin')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          priority_id: "5"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_edit_status_id
+    hook = stub_request(:post, 'https://localhost/test')
+
+    log_user('admin', 'admin')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          status_id: "2"
         }
       })
 
