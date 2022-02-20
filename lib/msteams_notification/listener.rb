@@ -93,12 +93,21 @@ module RedmineMsteamsNotification
     def find_attr_old_value(journal, property)
       return nil unless journal
 
-      detail = journal.details.find {|d| d.property == 'attr' && d.prop_key == "#{property}_id"}
+      case property
+      when 'project', 'tracker', 'status', 'priority'
+        prop_key = "#{property}_id"
+      else
+        prop_key = property
+      end
+
+      detail = journal.details.find {|d| d.property == 'attr' && d.prop_key == prop_key}
       return nil unless detail
 
       case property
       when 'assigned_to'
         return Principal.find_by_id(detail.old_value)
+      when 'due_date', 'start_date'
+        return detail.old_value
       when 'priority'
         return IssuePriority.find(detail.old_value)
       when 'project'
@@ -117,6 +126,15 @@ module RedmineMsteamsNotification
 
       detail = journal.details.find {|d| d.property == 'cf' && d.prop_key == id}
       detail.old_value if detail
+    end
+
+    def format_attr_value(property, value)
+      case property
+      when 'due_date', 'start_date'
+        return format_date(value)
+      end
+
+      return value.to_s
     end
 
     def link_to(url)
@@ -180,13 +198,14 @@ module RedmineMsteamsNotification
         facts[l(:field_assigned_to)] = assigned_to
       end
 
-      %w(project tracker status priority).each do |attribute|
+      %w(project tracker status priority start_date due_date).each do |attribute|
         old_value = find_attr_old_value(journal, attribute)
         new_value = issue.send(attribute)
         if old_value
-          facts[l_or_humanize(attribute, prefix: 'field_')] = "#{new_value} <- #{old_value}"
+          facts[l_or_humanize(attribute, prefix: 'field_')] =
+            "#{format_attr_value(attribute, new_value)} <- #{format_attr_value(attribute, old_value)}"
         else
-          facts[l_or_humanize(attribute, prefix: 'field_')] = new_value.to_s
+          facts[l_or_humanize(attribute, prefix: 'field_')] = format_attr_value(attribute, new_value)
         end
       end
 

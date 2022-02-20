@@ -167,6 +167,38 @@ class HookListenerTest < Redmine::IntegrationTest
     assert_requested(hook)
   end
 
+  def test_issue_edit_start_date
+    hook = stub_request(:post, 'https://localhost/test')
+
+    log_user('admin', 'admin')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          start_date: "2022-01-01"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_edit_due_date
+    hook = stub_request(:post, 'https://localhost/test')
+
+    log_user('admin', 'admin')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          due_date: "2023-01-01"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
   def test_wiki_edit
     hook = stub_request(:post, 'https://localhost/test')
 
