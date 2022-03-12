@@ -94,7 +94,7 @@ module RedmineMsteamsNotification
       return nil unless journal
 
       case property
-      when 'project', 'tracker', 'status', 'priority'
+      when 'assigned_to', 'project', 'tracker', 'status', 'priority'
         prop_key = "#{property}_id"
       else
         prop_key = property
