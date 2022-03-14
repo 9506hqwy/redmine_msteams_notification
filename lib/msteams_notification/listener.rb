@@ -3,6 +3,8 @@
 module RedmineMsteamsNotification
   class Listener < Redmine::Hook::Listener
     include Rails.application.routes.url_helpers
+    include ApplicationHelper
+    include CustomFieldsHelper
 
     def controller_issues_new_after_save(context)
       issue = context[:issue]
@@ -212,9 +214,9 @@ module RedmineMsteamsNotification
           if cf.roles.empty?
             old_value = find_cf_old_value(journal, cf.id.to_s)
             if old_value
-              facts[cf.name] = "#{cv.value} <- #{old_value}"
+              facts[cf.name] = "#{format_value(cv.value, cf)} <- #{format_value(old_value, cf)}"
             else
-              facts[cf.name] = cv.value
+              facts[cf.name] = format_value(cv.value, cf)
             end
           end
         end
