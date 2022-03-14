@@ -93,14 +93,7 @@ module RedmineMsteamsNotification
     def find_attr_old_value(journal, property)
       return nil unless journal
 
-      case property
-      when 'assigned_to', 'project', 'tracker', 'status', 'priority'
-        prop_key = "#{property}_id"
-      else
-        prop_key = property
-      end
-
-      detail = journal.details.find {|d| d.property == 'attr' && d.prop_key == prop_key}
+      detail = journal.details.find {|d| d.property == 'attr' && d.prop_key == property_key(property)}
       return nil unless detail
 
       case property
@@ -174,31 +167,35 @@ module RedmineMsteamsNotification
         author = key if key
       end
 
-      assigned_to = issue.assigned_to.name if issue.assigned_to
-      if message.mention_available? && mention_assigned_to?(issue, reporter)
-        key = message.add_mention_for(issue.project, issue.assigned_to)
-        assigned_to = key if key
-      end
-
       facts = {
         l(:field_author) => author,
       }
 
-      old_assigned_to = find_attr_old_value(journal, 'assigned_to')
-      if old_assigned_to
-        if message.mention_available? && mention_previous_assignee?(issue, old_assigned_to, reporter)
-          key = message.add_mention_for(issue.project, old_assigned_to)
-          old_assigned_to = old_assigned_to.name
-          old_assigned_to = key if key
-        else
-          old_assigned_to = old_assigned_to.name
+      unless issue.disabled_core_fields.include?(property_key('assigned_to'))
+        assigned_to = issue.assigned_to.name if issue.assigned_to
+        if message.mention_available? && mention_assigned_to?(issue, reporter)
+          key = message.add_mention_for(issue.project, issue.assigned_to)
+          assigned_to = key if key
         end
-        facts[l(:field_assigned_to)] = "#{assigned_to} <- #{old_assigned_to}"
-      else
-        facts[l(:field_assigned_to)] = assigned_to
+
+        old_assigned_to = find_attr_old_value(journal, 'assigned_to')
+        if old_assigned_to
+          if message.mention_available? && mention_previous_assignee?(issue, old_assigned_to, reporter)
+            key = message.add_mention_for(issue.project, old_assigned_to)
+            old_assigned_to = old_assigned_to.name
+            old_assigned_to = key if key
+          else
+            old_assigned_to = old_assigned_to.name
+          end
+          facts[l(:field_assigned_to)] = "#{assigned_to} <- #{old_assigned_to}"
+        else
+          facts[l(:field_assigned_to)] = assigned_to
+        end
       end
 
       %w(project tracker status priority start_date due_date).each do |attribute|
+        next if issue.disabled_core_fields.include?(property_key(attribute))
+
         old_value = find_attr_old_value(journal, attribute)
         new_value = issue.send(attribute)
         if old_value
@@ -240,6 +237,15 @@ module RedmineMsteamsNotification
       end
 
       url_for(act.event_url(options))
+    end
+
+    def property_key(property)
+      case property
+      when 'assigned_to', 'project', 'tracker', 'status', 'priority'
+        "#{property}_id"
+      else
+        property
+      end
     end
 
     def send_message(message, destination)
