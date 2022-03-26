@@ -208,6 +208,136 @@ class HookListenerTest < Redmine::IntegrationTest
     assert_requested(hook)
   end
 
+  def test_issue_bulk_edit_assigned_to_id
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Assignee\",\"value\":\"User Misc <- Redmine Admin\"/)
+
+    issue = issues(:issues_006)
+    issue.assigned_to_id = 1
+    issue.save!
+
+    log_user('admin', 'admin')
+
+    post(
+      '/issues/bulk_update',
+      params: {
+        id: issue.id,
+        issue: {
+          assigned_to_id: "8"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_bulk_edit_project_id
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Project\",\"value\":\"eCookbook <- Private child of eCookbook\"/)
+
+    log_user('admin', 'admin')
+
+    post(
+      '/issues/bulk_update',
+      params: {
+        id: 6,
+        issue: {
+          project_id: "1"
+        }
+      })
+
+    assert_not_requested(hook)
+  end
+
+  def test_issue_bulk_edit_tracker_id
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Tracker\",\"value\":\"Feature request <- Bug\"/)
+
+    log_user('admin', 'admin')
+
+    post(
+      '/issues/bulk_update',
+      params: {
+        id: 6,
+        issue: {
+          tracker_id: "2"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_bulk_edit_priority_id
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Priority\",\"value\":\"Normal <- Low\"/)
+
+    log_user('admin', 'admin')
+
+    post(
+      '/issues/bulk_update',
+      params: {
+        id: 6,
+        issue: {
+          priority_id: "5"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_bulk_edit_status_id
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Status\",\"value\":\"Assigned <- New\"/)
+
+    log_user('admin', 'admin')
+
+    post(
+      '/issues/bulk_update',
+      params: {
+        id: 6,
+        issue: {
+          status_id: "2"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_bulk_edit_start_date
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Start date\",\"value\":\"\d{2}\/\d{2}\/\d{4} <- \d{2}\/\d{2}\/\d{4}\"/)
+
+    log_user('admin', 'admin')
+
+    post(
+      '/issues/bulk_update',
+      params: {
+        id: 6,
+        issue: {
+          start_date: "2022-01-01"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_bulk_edit_due_date
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Due date\",\"value\":\"\d{2}\/\d{2}\/\d{4} <- \d{2}\/\d{2}\/\d{4}\"/)
+
+    log_user('admin', 'admin')
+
+    post(
+      '/issues/bulk_update',
+      params: {
+        id: 6,
+        issue: {
+          due_date: "2023-01-01"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
   def test_wiki_edit
     hook = stub_request(:post, 'https://localhost/test')
       .with(body: /Wiki was created. \(John Smith\)/)

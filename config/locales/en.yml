@@ -10,6 +10,8 @@ en:
   issue_added_title: was created.
   issue_edited_summary: Updated the Issue.
   issue_edited_title: was updated.
+  issue_editing_summary: Updating the Issue.
+  issue_editing_title: is updating.
   label_msteams_destination: WebHook URL
   label_msteams_format: Message Format
   label_msteams_mention_id_field: Object ID or UPN

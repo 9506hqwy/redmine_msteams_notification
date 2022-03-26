@@ -18,7 +18,7 @@ module RedmineMsteamsNotification
 
       card  = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      facts = new_facts(issue, nil, message, issue.author)
+      facts = new_facts(issue, message, issue.author)
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
       message.add_section(nil, nil, facts)
@@ -44,12 +44,35 @@ module RedmineMsteamsNotification
 
       card = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      facts = new_facts(issue, journal, message, journal.user)
+      facts = new_facts(issue, message, journal.user)
 
       message.add_open_uri(l(:msteams_card_action_open), journal_url)
       message.add_section(nil, nil, facts)
       message.add_section(nil, journal.event_description, nil)
       message.add_section(nil, link_to(journal_url), nil)
+
+      Rails.logger.debug(message.get_json)
+
+      send_message(message, issue.project.msteams_destination)
+    end
+
+    def controller_issues_bulk_edit_before_save(context)
+      issue = context[:issue]
+      return if issue.is_private
+      return unless enable?(issue.project)
+
+      summary = l(:issue_editing_summary)
+      title = sprintf('#%d %s (%s)', issue.id, l(:issue_editing_title), User.current.name)
+      text = issue.event_title
+      issue_url = object_url(issue)
+
+      card  = issue.project.msteams_destination.card_class
+      message = card.new(summary, title, text)
+      facts = new_facts(issue, message, issue.author)
+
+      message.add_open_uri(l(:msteams_card_action_open), issue_url)
+      message.add_section(nil, nil, facts)
+      message.add_section(nil, link_to(issue_url), nil)
 
       Rails.logger.debug(message.get_json)
 
@@ -92,35 +115,30 @@ module RedmineMsteamsNotification
       return project.msteams_destination.url.present?
     end
 
-    def find_attr_old_value(journal, property)
-      return nil unless journal
-
-      detail = journal.details.find {|d| d.property == 'attr' && d.prop_key == property_key(property)}
-      return nil unless detail
+    def find_attr_old_value(issue, property)
+      key = property_key(property)
+      # for after save
+      old_value = issue.previous_changes[key]&.first
+      # for before save
+      old_value ||= issue.changed_attributes[key]
+      return nil unless old_value
 
       case property
       when 'assigned_to'
-        return Principal.find_by_id(detail.old_value)
+        return Principal.find_by_id(old_value)
       when 'due_date', 'start_date'
-        return detail.old_value
+        return old_value
       when 'priority'
-        return IssuePriority.find(detail.old_value)
+        return IssuePriority.find(old_value)
       when 'project'
-        return Project.find_by_id(detail.old_value)
+        return Project.find_by_id(old_value)
       when 'status'
-        return IssueStatus.find_by_id(detail.old_value)
+        return IssueStatus.find_by_id(old_value)
       when 'tracker'
-        return Tracker.find_by_id(detail.old_value)
+        return Tracker.find_by_id(old_value)
       end
 
       nil
-    end
-
-    def find_cf_old_value(journal, id)
-      return nil unless journal
-
-      detail = journal.details.find {|d| d.property == 'cf' && d.prop_key == id}
-      detail.old_value if detail
     end
 
     def format_attr_value(property, value)
@@ -162,7 +180,7 @@ module RedmineMsteamsNotification
       issue.author.active?
     end
 
-    def new_facts(issue, journal, message, reporter)
+    def new_facts(issue, message, reporter)
       author = issue.author.name
       if message.mention_available? && mention_author?(issue, reporter)
         key = message.add_mention_for(issue.project, issue.author)
@@ -180,7 +198,7 @@ module RedmineMsteamsNotification
           assigned_to = key if key
         end
 
-        old_assigned_to = find_attr_old_value(journal, 'assigned_to')
+        old_assigned_to = find_attr_old_value(issue, 'assigned_to')
         if old_assigned_to
           if message.mention_available? && mention_previous_assignee?(issue, old_assigned_to, reporter)
             key = message.add_mention_for(issue.project, old_assigned_to)
@@ -198,7 +216,7 @@ module RedmineMsteamsNotification
       %w(project tracker status priority start_date due_date).each do |attribute|
         next if issue.disabled_core_fields.include?(property_key(attribute))
 
-        old_value = find_attr_old_value(journal, attribute)
+        old_value = find_attr_old_value(issue, attribute)
         new_value = issue.send(attribute)
         if old_value
           facts[l_or_humanize(attribute, prefix: 'field_')] =
@@ -212,9 +230,10 @@ module RedmineMsteamsNotification
         if cv.required?
           cf = cv.custom_field
           if cf.roles.empty?
-            old_value = find_cf_old_value(journal, cf.id.to_s)
-            if old_value
-              facts[cf.name] = "#{format_value(cv.value, cf)} <- #{format_value(old_value, cf)}"
+            old_value = cv.value_was unless cv.value == cv.value_was
+            old_value = format_value(old_value, cf) if old_value
+            if old_value.present?
+              facts[cf.name] = "#{format_value(cv.value, cf)} <- #{old_value}"
             else
               facts[cf.name] = format_value(cv.value, cf)
             end
