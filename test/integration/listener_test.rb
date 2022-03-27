@@ -29,6 +29,7 @@ class HookListenerTest < Redmine::IntegrationTest
            :wikis,
            :wiki_contents,
            :wiki_pages,
+           :workflows,
            :msteams_destinations
 
   def setup
