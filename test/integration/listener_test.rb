@@ -48,7 +48,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_add
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /#15 was created. \(John Smith\)/)
+      .with(body: /#\d+ was created. \(John Smith\)/)
 
     log_user('jsmith', 'jsmith')
 
