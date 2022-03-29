@@ -1,14 +1,22 @@
 # frozen_string_literal: true
 
-require_dependency 'msteams_notification/utils'
-require_dependency 'msteams_notification/card'
-require_dependency 'msteams_notification/adaptive_card'
-require_dependency 'msteams_notification/custom_field_patch'
-require_dependency 'msteams_notification/listener'
-require_dependency 'msteams_notification/message_card'
-require_dependency 'msteams_notification/projects_helper_patch'
-require_dependency 'msteams_notification/project_patch'
-require_dependency 'msteams_notification/user_patch'
+basedir = File.expand_path('../lib', __FILE__)
+libraries =
+  [
+    'redmine_msteams_notification/utils',
+    'redmine_msteams_notification/card',
+    'redmine_msteams_notification/adaptive_card',
+    'redmine_msteams_notification/custom_field_patch',
+    'redmine_msteams_notification/listener',
+    'redmine_msteams_notification/message_card',
+    'redmine_msteams_notification/projects_helper_patch',
+    'redmine_msteams_notification/project_patch',
+    'redmine_msteams_notification/user_patch',
+  ]
+
+libraries.each do |library|
+  require_dependency File.expand_path(library, basedir)
+end
 
 Redmine::Plugin.register :redmine_msteams_notification do
   name 'Redmine MSTeams Notification plugin'
