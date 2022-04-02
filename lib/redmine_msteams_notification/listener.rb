@@ -141,15 +141,6 @@ module RedmineMsteamsNotification
       nil
     end
 
-    def format_attr_value(property, value)
-      case property
-      when 'due_date', 'start_date'
-        return format_date(value)
-      end
-
-      return value.to_s
-    end
-
     def link_to(url)
       "[#{url}](#{url})"
     end
@@ -220,9 +211,9 @@ module RedmineMsteamsNotification
         new_value = issue.send(attribute)
         if old_value
           facts[l_or_humanize(attribute, prefix: 'field_')] =
-            "#{format_attr_value(attribute, new_value)} <- #{format_attr_value(attribute, old_value)}"
+            "#{format_object(new_value, false)} <- #{format_object(old_value, false)}"
         else
-          facts[l_or_humanize(attribute, prefix: 'field_')] = format_attr_value(attribute, new_value)
+          facts[l_or_humanize(attribute, prefix: 'field_')] = format_object(new_value, false)
         end
       end
 
