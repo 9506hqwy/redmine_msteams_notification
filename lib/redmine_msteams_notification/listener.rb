@@ -145,37 +145,12 @@ module RedmineMsteamsNotification
       "[#{url}](#{url})"
     end
 
-    def mention_assigned_to?(issue, reporter)
-      return false unless issue.assigned_to
-      return false if issue.assigned_to.is_a?(Group)
-      return false if issue.assigned_to == reporter
-      return false unless issue.assigned_to.msteams_mentioned_enable?(issue.project.msteams_destination)
-
-      issue.assigned_to.active?
-    end
-
-    def mention_previous_assignee?(issue, assignee, reporter)
-      return false unless assignee
-      return false if assignee.is_a?(Group)
-      return false if assignee == reporter
-      return false unless assignee.msteams_mentioned_enable?(issue.project.msteams_destination)
-
-      assignee.active?
-    end
-
-    def mention_author?(issue, reporter)
-      return false if issue.author == reporter
-      return false if issue.author == issue.assigned_to
-      return false unless issue.author.msteams_mentioned_enable?(issue.project.msteams_destination)
-
-      issue.author.active?
-    end
-
     def new_facts(issue, message, reporter)
+      mentioned = [reporter]
+
       author = issue.author.name
-      if message.mention_available? && mention_author?(issue, reporter)
-        key = message.add_mention_for(issue.project, issue.author)
-        author = key if key
+      if issue.author != issue.assigned_to
+        author = set_mentioned_key(message, issue.project, issue.author, mentioned)
       end
 
       facts = {
@@ -183,21 +158,11 @@ module RedmineMsteamsNotification
       }
 
       unless issue.disabled_core_fields.include?(property_key('assigned_to'))
-        assigned_to = issue.assigned_to.name if issue.assigned_to
-        if message.mention_available? && mention_assigned_to?(issue, reporter)
-          key = message.add_mention_for(issue.project, issue.assigned_to)
-          assigned_to = key if key
-        end
+        assigned_to = set_mentioned_key(message, issue.project, issue.assigned_to, mentioned)
 
         old_assigned_to = find_attr_old_value(issue, 'assigned_to')
         if old_assigned_to
-          if message.mention_available? && mention_previous_assignee?(issue, old_assigned_to, reporter)
-            key = message.add_mention_for(issue.project, old_assigned_to)
-            old_assigned_to = old_assigned_to.name
-            old_assigned_to = key if key
-          else
-            old_assigned_to = old_assigned_to.name
-          end
+          old_assigned_to = set_mentioned_key(message, issue.project, old_assigned_to, mentioned)
           facts[l(:field_assigned_to)] = "#{assigned_to} <- #{old_assigned_to}"
         else
           facts[l(:field_assigned_to)] = assigned_to
@@ -264,6 +229,24 @@ module RedmineMsteamsNotification
       message.send(destination.url, destination.skip_ssl_verify)
     rescue => e
       Rails.logger.error(e)
+    end
+
+    def set_mentioned_key(message, project, user, mentioned)
+      if message.mention_available? && user_mention_enable?(project, user, mentioned)
+        mentioned << user
+        key = message.add_mention_for(project, user)
+      end
+
+      key || user&.name
+    end
+
+    def user_mention_enable?(project, user, mentioned)
+      return false unless user
+      return false if user.is_a?(Group)
+      return false unless user.active?
+      return false if mentioned.include?(user)
+
+      user.msteams_mentioned_enable?(project.msteams_destination)
     end
   end
 end

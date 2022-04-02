@@ -39,6 +39,10 @@ class HookListenerTest < Redmine::IntegrationTest
     project = Project.find(5)
     project.enable_module!(:msteams_notification)
     project.enable_module!(:wiki)
+
+    project.msteams_destination.mention_id_field_id = nil
+    project.msteams_destination.user_mentioned_field_id = nil
+    project.msteams_destination.save!
   end
 
   def teardown
@@ -69,6 +73,52 @@ class HookListenerTest < Redmine::IntegrationTest
     assert_requested(hook)
   end
 
+  def test_issue_add_mention_assigned_to
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Assignee\",\"value\":\"<at>miscuser8<\/at>\"/)
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8
+          }
+        })
+    end
+
+    assert_requested(hook)
+  end
+
+  def test_issue_add_mention_not_assigned_to
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Assignee\",\"value\":\"John Smith\"/)
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 2
+          }
+        })
+    end
+
+    assert_requested(hook)
+  end
+
   def test_issue_edit_subject
     hook = stub_request(:post, 'https://localhost/test')
       .with(body: /#6 was updated. \(Redmine Admin\)/)
@@ -86,9 +136,26 @@ class HookListenerTest < Redmine::IntegrationTest
     assert_requested(hook)
   end
 
+  def test_issue_edit_subject_mention_author
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Author\",\"value\":\"<at>jsmith<\/at>\"/)
+
+    log_user('admin', 'admin')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          subject: "test issue"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
   def test_issue_edit_assigned_to_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Assignee\",\"value\":\"User Misc <- Redmine Admin\"/)
+      .with(body: /\"title\":\"Assignee\",\"value\":\"<at>miscuser8<\/at> <- Redmine Admin\"/)
 
     issue = issues(:issues_006)
     issue.assigned_to_id = 1
@@ -101,6 +168,27 @@ class HookListenerTest < Redmine::IntegrationTest
       params: {
         issue: {
           assigned_to_id: "8"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_edit_previous_assigned_to_id
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Assignee\",\"value\":\"John Smith <- <at>admin<\/at>\"/)
+
+    issue = issues(:issues_006)
+    issue.assigned_to_id = 1
+    issue.save!
+
+    log_user('jsmith', 'jsmith')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          assigned_to_id: "2"
         }
       })
 
@@ -211,7 +299,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_bulk_edit_assigned_to_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Assignee\",\"value\":\"User Misc <- Redmine Admin\"/)
+      .with(body: /\"title\":\"Assignee\",\"value\":\"<at>miscuser8<\/at> <- Redmine Admin\"/)
 
     issue = issues(:issues_006)
     issue.assigned_to_id = 1
