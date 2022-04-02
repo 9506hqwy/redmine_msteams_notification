@@ -68,7 +68,7 @@ module RedmineMsteamsNotification
 
       card  = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      facts = new_facts(issue, message, issue.author)
+      facts = new_facts(issue, message, User.current)
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
       message.add_section(nil, nil, facts)
