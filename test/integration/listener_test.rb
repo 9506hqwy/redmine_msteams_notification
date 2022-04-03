@@ -119,6 +119,32 @@ class HookListenerTest < Redmine::IntegrationTest
     assert_requested(hook)
   end
 
+  def test_issue_add_mention_mentioned
+    skip unless Redmine::VERSION::MAJOR >= 5
+
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Mentioned\",\"value\":\"<at>admin<\/at>\"/)
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8,
+            description: "@admin",
+          }
+        })
+    end
+
+    assert_requested(hook)
+  end
+
   def test_issue_edit_subject
     hook = stub_request(:post, 'https://localhost/test')
       .with(body: /#6 was updated. \(Redmine Admin\)/)
@@ -147,6 +173,63 @@ class HookListenerTest < Redmine::IntegrationTest
       params: {
         issue: {
           subject: "test issue"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_edit_description_mention_mentioned
+    skip unless Redmine::VERSION::MAJOR >= 5
+
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Mentioned\",\"value\":\"<at>admin<\/at>\"/)
+
+    log_user('jsmith', 'jsmith')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          description: "@admin"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_edit_notes_mention_mentioned
+    skip unless Redmine::VERSION::MAJOR >= 5
+
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"text\":\"<at>admin<\/at>\"/)
+
+    log_user('jsmith', 'jsmith')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          notes: "@admin"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_edit_notes_mention_not_mentioned
+    skip unless Redmine::VERSION::MAJOR >= 5
+
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"text\":\"@admina\"/)
+
+    log_user('jsmith', 'jsmith')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          notes: "@admina"
         }
       })
 
@@ -438,6 +521,44 @@ class HookListenerTest < Redmine::IntegrationTest
       params: {
         content: {
           text: "wiki content"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_wiki_edit_mention_mentioned
+    skip unless Redmine::VERSION::MAJOR >= 5
+
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Mentioned\",\"value\":\"<at>admin<\/at>\"/)
+
+    log_user('jsmith', 'jsmith')
+
+    put(
+      '/projects/private-child/wiki/Wiki',
+      params: {
+        content: {
+          text: "@admin"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_wiki_edit_mention_not_mentioned
+    skip unless Redmine::VERSION::MAJOR >= 5
+
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Mentioned\",\"value\":\"Redmine Admin\"/)
+
+    log_user('admin', 'admin')
+
+    put(
+      '/projects/private-child/wiki/Wiki',
+      params: {
+        content: {
+          text: "@admin"
         }
       })
 

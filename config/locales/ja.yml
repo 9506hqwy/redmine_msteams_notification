@@ -1,5 +1,6 @@
 ja:
   error_failure_test: テスト通知が失敗しました。
+  field_mentioned: メンション
   hint_msteams_mention_id_field: |
     メンションするときの各ユーザの Azure AD オブジェクト ID または UPN を指定するカスタムフィールドを設定します。
     省略した場合はメールアドレスを使用します。

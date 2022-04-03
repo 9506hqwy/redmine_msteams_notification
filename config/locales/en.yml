@@ -1,5 +1,6 @@
 en:
   error_failure_test: Failed test notification.
+  field_mentioned: Mentioned
   hint_msteams_mention_id_field: |
     Set a custom field that specifies the Azure AD object ID or UPN for each user when mentioning.
     If omitted, the email address will be used.

@@ -18,7 +18,7 @@ module RedmineMsteamsNotification
 
       card  = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      facts = new_facts(issue, message, issue.author)
+      facts = new_facts(issue, message, [issue.author])
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
       message.add_section(nil, nil, facts)
@@ -44,11 +44,13 @@ module RedmineMsteamsNotification
 
       card = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      facts = new_facts(issue, message, journal.user)
+      mentioned = [journal.user]
+      facts = new_facts(issue, message, mentioned)
+      description = mentioned_text(message, issue.project, journal, journal.event_description, mentioned)
 
       message.add_open_uri(l(:msteams_card_action_open), journal_url)
       message.add_section(nil, nil, facts)
-      message.add_section(nil, journal.event_description, nil)
+      message.add_section(nil, description, nil)
       message.add_section(nil, link_to(journal_url), nil)
 
       Rails.logger.debug(message.get_json)
@@ -68,7 +70,7 @@ module RedmineMsteamsNotification
 
       card  = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      facts = new_facts(issue, message, User.current)
+      facts = new_facts(issue, message, [User.current])
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
       message.add_section(nil, nil, facts)
@@ -91,12 +93,18 @@ module RedmineMsteamsNotification
       title = sprintf('%s %s (%s)', page.title, l(:wiki_added_title), author.name) if page.content.version == 1
       text = page.event_title
       page_url = object_url(page)
+
+      card = page.project.msteams_destination.card_class
+      message = card.new(summary, title, text)
+
       facts = {
         l(:field_author) => author.name,
       }
 
-      card = page.project.msteams_destination.card_class
-      message = card.new(summary, title, text)
+      if Redmine::VERSION::MAJOR >= 5
+        facts[l(:field_mentioned)] = notified_mentions(message, page.project, page.content, [author])
+      end
+
       message.add_open_uri(l(:msteams_card_action_open), page_url)
       message.add_section(nil, nil, facts)
       message.add_section(nil, link_to(page_url), nil)
@@ -145,9 +153,20 @@ module RedmineMsteamsNotification
       "[#{url}](#{url})"
     end
 
-    def new_facts(issue, message, reporter)
-      mentioned = [reporter]
+    def mentioned_text(message, project, mentionable, text, mentioned)
+      return text unless Redmine::VERSION::MAJOR >= 5
 
+      mentionable.mentioned_users.to_a.each do |user|
+        key = set_mentioned_key(message, project, user, mentioned)
+        next unless key
+
+        text = text.gsub(/@#{user.login}[^A-Za-z0-9_\-@\.]/, key)
+      end
+
+      text
+    end
+
+    def new_facts(issue, message, mentioned)
       author = issue.author.name
       if issue.author != issue.assigned_to
         author = set_mentioned_key(message, issue.project, issue.author, mentioned)
@@ -197,7 +216,17 @@ module RedmineMsteamsNotification
         end
       end
 
+      if Redmine::VERSION::MAJOR >= 5
+        facts[l(:field_mentioned)] = notified_mentions(message, issue.project, issue, mentioned)
+      end
+
       facts
+    end
+
+    def notified_mentions(message, project, mentionable, mentioned)
+      users = mentionable.mentioned_users.to_a
+      users.map! { |user| set_mentioned_key(message, project, user, mentioned) }
+      users.compact.join(',')
     end
 
     def object_url(act)
