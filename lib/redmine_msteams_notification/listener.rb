@@ -160,7 +160,8 @@ module RedmineMsteamsNotification
         key = set_mentioned_key(message, project, user, mentioned)
         next unless key
 
-        text = text.gsub(/@#{user.login}([^A-Za-z0-9_\-@\.])/, "#{key}\\1")
+        login = Regexp.escape(user.login)
+        text = text.gsub(/@#{login}([^A-Za-z0-9_\-@\.])/, "#{key}\\1")
       end
 
       text
