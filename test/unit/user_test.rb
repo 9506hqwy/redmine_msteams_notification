@@ -5,6 +5,7 @@ require File.expand_path('../../test_helper', __FILE__)
 class UserTest < ActiveSupport::TestCase
   fixtures :custom_fields,
            :custom_values,
+           :email_addresses,
            :users,
            :msteams_destinations
 
