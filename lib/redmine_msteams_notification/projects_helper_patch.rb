@@ -40,7 +40,9 @@ module RedmineMsteamsNotification
 end
 
 if ActiveSupport::VERSION::MAJOR >= 5
-  ProjectsHelper.prepend RedmineMsteamsNotification::ProjectsHelperPatch5
+  Rails.application.config.after_initialize do
+    ProjectsController.send(:helper, RedmineMsteamsNotification::ProjectsHelperPatch5)
+  end
 else
   ProjectsHelper.include RedmineMsteamsNotification::ProjectsHelperPatch4
 end
