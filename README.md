@@ -15,11 +15,15 @@ This plugin provides a event notification to Microsoft Teams.
    ```sh
    git clone https://github.com/9506hqwy/redmine_msteams_notification.git
    ```
-2. Install plugin in Redmine directory.
+2. Install dependency libraries in Redmine directory.
+   ```sh
+   bundle install --without development test
+   ```
+3. Install plugin in Redmine directory.
    ```sh
    bundle exec rake redmine:plugins:migrate NAME=redmine_msteams_notification RAILS_ENV=production
    ```
-3. Start Redmine
+4. Start Redmine
 
 ## Configuration
 
