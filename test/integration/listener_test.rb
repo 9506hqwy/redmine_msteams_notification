@@ -373,7 +373,7 @@ class HookListenerTest < Redmine::IntegrationTest
       '/issues/6',
       params: {
         issue: {
-          due_date: "2023-01-01"
+          due_date: "3000-01-01"
         }
       })
 
