@@ -7,5 +7,12 @@ module RedmineMsteamsNotification
     else
       Migration = ActiveRecord::Migration
     end
+
+    if defined?(ApplicationRecord)
+      # https://www.redmine.org/issues/38975
+      ModelBase = ApplicationRecord
+    else
+      ModelBase = ActiveRecord::Base
+    end
   end
 end
