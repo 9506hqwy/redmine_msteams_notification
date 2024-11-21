@@ -1,14 +1,14 @@
 msteams_destinations_001:
   project_id: 2
   url:
-  format:
+  format: MessageCard
   skip_ssl_verify: false
   mention_id_field_id:
   user_mentioned_field_id:
 msteams_destinations_002:
   project_id: 5
   url: https://localhost/test
-  format: AdaptiveCard
+  format:
   skip_ssl_verify: true
   mention_id_field_id: 4
   user_mentioned_field_id: 5

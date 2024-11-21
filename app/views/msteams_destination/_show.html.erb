@@ -19,7 +19,7 @@
   <p>
     <label><%= l(:label_msteams_format) %>:</label>
     <%= select_tag('msteams_format',
-                   options_for_select(["MessageCard", "AdaptiveCard"], destination.format),
+                   options_for_select(["AdaptiveCard", "MessageCard"], destination.format),
                    include_blank: true) %>
   </p>
   <p>

@@ -6,10 +6,10 @@ class MsteamsDestination < RedmineMsteamsNotification::Utils::ModelBase
   belongs_to :user_mentioned_field, class_name: :CustomField
 
   def card_class
-    if format == 'AdaptiveCard'
-      RedmineMsteamsNotification::AdaptiveCard
-    else
+    if format == 'MessageCard'
       RedmineMsteamsNotification::MessageCard
+    else
+      RedmineMsteamsNotification::AdaptiveCard
     end
   end
 end

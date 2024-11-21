@@ -1,6 +1,6 @@
 # Redmine MSTeams Notification
 
-This plugin provides a event notification to Microsoft Teams. 
+This plugin provides a event notification to Microsoft Teams.
 
 ## Features
 
@@ -35,11 +35,11 @@ This plugin provides a event notification to Microsoft Teams.
 
    - [WebHook URL]
 
-     Input MSTeams incoming hook URL.
+     Input MSTeams incoming webhook URL or workflows webhook URL.
 
    - [Message Format]
 
-     Select `MessageCard` or `AdaptiveCard`. The default is `MessageCard`.
+     Select `MessageCard` or `AdaptiveCard`. The default is `AdaptiveCard`.
 
    - [Skip SSL certificate verification]
 
