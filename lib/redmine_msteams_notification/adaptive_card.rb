@@ -52,7 +52,7 @@ module RedmineMsteamsNotification
       id = user.msteams_mention_id(project.msteams_destination)
       return nil if id.blank?
 
-      key = "<at>#{user.login}</at>"
+      key = "<at>#{user.mail.to_s}</at>"
       add_mention(key, id, user.name)
       key
     end
