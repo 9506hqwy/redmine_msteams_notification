@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'set'
+
 module RedmineMsteamsNotification
   class Listener < Redmine::Hook::Listener
     include Rails.application.routes.url_helpers
@@ -18,14 +20,19 @@ module RedmineMsteamsNotification
 
       card  = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      facts = new_facts(issue, message, [issue.author])
+      facts = new_facts(issue, message, Set.new([issue.author]))
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
       message.add_section(nil, nil, facts)
-      message.add_section(nil, link_to(issue_url), nil)
 
       Rails.logger.debug(message.get_json)
-
+      
+      issue.watcher_users.each do |watcher|
+        next if watcher == issue.author || watcher == issue.assigned_to
+        next unless user_mention_enable?(issue.project, watcher, [])
+        message.add_mention_for(issue.project, watcher)
+      end
+    
       send_message(message, issue.project.msteams_destination)
     end
 
@@ -44,17 +51,22 @@ module RedmineMsteamsNotification
 
       card = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      mentioned = [journal.user]
+      mentioned = Set.new([journal.user])
       facts = new_facts(issue, message, mentioned)
       description = mentioned_text(message, issue.project, journal, journal.event_description, mentioned)
 
       message.add_open_uri(l(:msteams_card_action_open), journal_url)
       message.add_section(nil, nil, facts)
       message.add_section(nil, description, nil)
-      message.add_section(nil, link_to(journal_url), nil)
 
       Rails.logger.debug(message.get_json)
 
+      issue.watcher_users.each do |watcher|
+        next if watcher == journal.user || watcher == issue.assigned_to
+        next unless user_mention_enable?(issue.project, watcher, [])
+        message.add_mention_for(issue.project, watcher)
+      end
+      
       send_message(message, issue.project.msteams_destination)
     end
 
@@ -70,14 +82,19 @@ module RedmineMsteamsNotification
 
       card  = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      facts = new_facts(issue, message, [User.current])
+      facts = new_facts(issue, message, Set.new([User.current]))
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
       message.add_section(nil, nil, facts)
-      message.add_section(nil, link_to(issue_url), nil)
 
       Rails.logger.debug(message.get_json)
 
+      issue.watcher_users.each do |watcher|
+        next if watcher == User.current || watcher == issue.assigned_to
+        next unless user_mention_enable?(issue.project, watcher, [])
+        message.add_mention_for(issue.project, watcher)
+      end
+      
       send_message(message, issue.project.msteams_destination)
     end
 
@@ -107,7 +124,6 @@ module RedmineMsteamsNotification
 
       message.add_open_uri(l(:msteams_card_action_open), page_url)
       message.add_section(nil, nil, facts)
-      message.add_section(nil, link_to(page_url), nil)
 
       Rails.logger.debug(message.get_json)
 
@@ -183,13 +199,16 @@ module RedmineMsteamsNotification
         old_assigned_to = find_attr_old_value(issue, 'assigned_to')
         if old_assigned_to
           old_assigned_to = set_mentioned_key(message, issue.project, old_assigned_to, mentioned)
-          facts[l(:field_assigned_to)] = "#{assigned_to} <- #{old_assigned_to}"
+		  # MS Teams BUG workaound: https://github.com/MicrosoftDocs/msteams-docs/issues/11273
+		  # Not working: old_assigned_to_plain = old_assigned_to.gsub(/\A<at>/, '').gsub(/<\/at>\z/, '')
+		  # Not working:  facts[l(:field_assigned_to)] = "#{assigned_to} <- #{old_assigned_to_plain}"
+		  facts[l(:field_assigned_to)] = assigned_to
         else
           facts[l(:field_assigned_to)] = assigned_to
         end
       end
 
-      %w(project tracker status priority start_date due_date).each do |attribute|
+      %w(project tracker status).each do |attribute|
         next if issue.disabled_core_fields.include?(property_key(attribute))
 
         old_value = find_attr_old_value(issue, attribute)
@@ -217,15 +236,12 @@ module RedmineMsteamsNotification
         end
       end
 
-      if Redmine::VERSION::MAJOR >= 5
-        facts[l(:field_mentioned)] = notified_mentions(message, issue.project, issue, mentioned)
-      end
-
       facts
     end
 
     def notified_mentions(message, project, mentionable, mentioned)
       users = mentionable.mentioned_users.to_a
+	  users |= mentionable.watcher_users.to_a if mentionable.respond_to?(:watcher_users)
       users.map! { |user| set_mentioned_key(message, project, user, mentioned) }
       users.compact.join(',')
     end
@@ -263,7 +279,7 @@ module RedmineMsteamsNotification
 
     def set_mentioned_key(message, project, user, mentioned)
       if message.mention_available? && user_mention_enable?(project, user, mentioned)
-        mentioned << user
+        mentioned.add(user)
         key = message.add_mention_for(project, user)
       end
 
