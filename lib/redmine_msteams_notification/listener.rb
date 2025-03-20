@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'set'
+
 module RedmineMsteamsNotification
   class Listener < Redmine::Hook::Listener
     include Rails.application.routes.url_helpers
@@ -18,7 +20,7 @@ module RedmineMsteamsNotification
 
       card  = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      facts = new_facts(issue, message, [issue.author])
+      facts = new_facts(issue, message, Set.new([issue.author]))
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
       message.add_section(nil, nil, facts)
@@ -50,7 +52,7 @@ module RedmineMsteamsNotification
 
       card = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      mentioned = [journal.user]
+      mentioned = Set.new([journal.user])
       facts = new_facts(issue, message, mentioned)
       description = mentioned_text(message, issue.project, journal, journal.event_description, mentioned)
 
@@ -82,7 +84,7 @@ module RedmineMsteamsNotification
 
       card  = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      facts = new_facts(issue, message, [User.current])
+      facts = new_facts(issue, message, Set.new([User.current]))
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
       message.add_section(nil, nil, facts)
@@ -244,6 +246,7 @@ module RedmineMsteamsNotification
 
     def notified_mentions(message, project, mentionable, mentioned)
       users = mentionable.mentioned_users.to_a
+	  users |= mentionable.watcher_users.to_a if mentionable.respond_to?(:watcher_users)
       users.map! { |user| set_mentioned_key(message, project, user, mentioned) }
       users.compact.join(',')
     end
@@ -281,7 +284,7 @@ module RedmineMsteamsNotification
 
     def set_mentioned_key(message, project, user, mentioned)
       if message.mention_available? && user_mention_enable?(project, user, mentioned)
-        mentioned << user
+        mentioned.add(user)
         key = message.add_mention_for(project, user)
       end
 
