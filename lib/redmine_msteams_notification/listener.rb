@@ -204,8 +204,9 @@ module RedmineMsteamsNotification
         if old_assigned_to
           old_assigned_to = set_mentioned_key(message, issue.project, old_assigned_to, mentioned)
 		  # MS Teams BUG workaound: https://github.com/MicrosoftDocs/msteams-docs/issues/11273
-		  old_assigned_to_plain = old_assigned_to.gsub(/\A<at>/, '').gsub(/<\/at>\z/, '')
-		  facts[l(:field_assigned_to)] = "#{assigned_to} <- #{old_assigned_to_plain}"
+		  # Not working: old_assigned_to_plain = old_assigned_to.gsub(/\A<at>/, '').gsub(/<\/at>\z/, '')
+		  # Not working:  facts[l(:field_assigned_to)] = "#{assigned_to} <- #{old_assigned_to_plain}"
+		  facts[l(:field_assigned_to)] = assigned_to
         else
           facts[l(:field_assigned_to)] = assigned_to
         end
