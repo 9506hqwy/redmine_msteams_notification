@@ -24,7 +24,6 @@ module RedmineMsteamsNotification
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
       message.add_section(nil, nil, facts)
-      message.add_section(nil, link_to(issue_url), nil)
 
       Rails.logger.debug(message.get_json)
       
@@ -59,7 +58,6 @@ module RedmineMsteamsNotification
       message.add_open_uri(l(:msteams_card_action_open), journal_url)
       message.add_section(nil, nil, facts)
       message.add_section(nil, description, nil)
-      message.add_section(nil, link_to(journal_url), nil)
 
       Rails.logger.debug(message.get_json)
 
@@ -88,7 +86,6 @@ module RedmineMsteamsNotification
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
       message.add_section(nil, nil, facts)
-      message.add_section(nil, link_to(issue_url), nil)
 
       Rails.logger.debug(message.get_json)
 
@@ -127,7 +124,6 @@ module RedmineMsteamsNotification
 
       message.add_open_uri(l(:msteams_card_action_open), page_url)
       message.add_section(nil, nil, facts)
-      message.add_section(nil, link_to(page_url), nil)
 
       Rails.logger.debug(message.get_json)
 
@@ -212,7 +208,7 @@ module RedmineMsteamsNotification
         end
       end
 
-      %w(project tracker status priority start_date due_date).each do |attribute|
+      %w(project tracker status).each do |attribute|
         next if issue.disabled_core_fields.include?(property_key(attribute))
 
         old_value = find_attr_old_value(issue, attribute)
@@ -238,10 +234,6 @@ module RedmineMsteamsNotification
             end
           end
         end
-      end
-
-      if Redmine::VERSION::MAJOR >= 5
-        facts[l(:field_mentioned)] = notified_mentions(message, issue.project, issue, mentioned)
       end
 
       facts
