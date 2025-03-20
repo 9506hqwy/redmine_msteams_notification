@@ -25,7 +25,13 @@ module RedmineMsteamsNotification
       message.add_section(nil, link_to(issue_url), nil)
 
       Rails.logger.debug(message.get_json)
-
+      
+      issue.watcher_users.each do |watcher|
+        next if watcher == issue.author || watcher == issue.assigned_to
+        next unless user_mention_enable?(issue.project, watcher, [])
+        message.add_mention_for(issue.project, watcher)
+      end
+    
       send_message(message, issue.project.msteams_destination)
     end
 
@@ -55,6 +61,12 @@ module RedmineMsteamsNotification
 
       Rails.logger.debug(message.get_json)
 
+      issue.watcher_users.each do |watcher|
+        next if watcher == journal.user || watcher == issue.assigned_to
+        next unless user_mention_enable?(issue.project, watcher, [])
+        message.add_mention_for(issue.project, watcher)
+      end
+      
       send_message(message, issue.project.msteams_destination)
     end
 
@@ -78,6 +90,12 @@ module RedmineMsteamsNotification
 
       Rails.logger.debug(message.get_json)
 
+      issue.watcher_users.each do |watcher|
+        next if watcher == User.current || watcher == issue.assigned_to
+        next unless user_mention_enable?(issue.project, watcher, [])
+        message.add_mention_for(issue.project, watcher)
+      end
+      
       send_message(message, issue.project.msteams_destination)
     end
 
