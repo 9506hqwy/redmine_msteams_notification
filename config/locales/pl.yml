@@ -1,0 +1,30 @@
+pl:
+  error_failure_test: Nie udało się wysłać powiadomienia testowego.
+  field_mentioned: Wzmiankowano
+  hint_msteams_mention_id_field: |
+    Ustaw niestandardowe pole, które określa identyfikator obiektu Azure AD lub UPN dla każdego użytkownika przy wzmiance.
+    Jeśli nie zostanie podane, użyty zostanie adres e-mail.
+  hint_msteams_user_mentioned_field: |
+    Ustaw niestandardowe pole, które określa, czy wzmianki są włączone dla każdego użytkownika.
+    Jeśli nie zostanie podane, wzmianki będą włączone.
+  issue_added_summary: Utworzono nowe zgłoszenie.
+  issue_added_title: zostało utworzone.
+  issue_edited_summary: Zaktualizowano zgłoszenie.
+  issue_edited_title: zostało zaktualizowane.
+  issue_editing_summary: Aktualizacja zgłoszenia.
+  issue_editing_title: jest aktualizowane.
+  label_msteams_destination: URL WebHook
+  label_msteams_format: Format wiadomości
+  label_msteams_mention_id_field: ID obiektu lub UPN
+  label_msteams_skip_ssl_verify: Pomiń weryfikację certyfikatu SSL
+  label_msteams_user_mentioned_field: Preferencje użytkownika
+  msteams_card_action_open: Otwórz
+  msteams_notification: Powiadomienie MSTeams
+  notice_successful_test: Powiadomienie testowe zakończone powodzeniem.
+  permission_edit_msteams_notification: Edytuj powiadomienie MSTeams
+  project_module_msteams_notification: Powiadomienie MSTeams
+  submit_msteams_send_test_notification: Wyślij powiadomienie testowe
+  wiki_added_summary: Utworzono nowe Wiki.
+  wiki_added_title: zostało utworzone.
+  wiki_edited_summary: Zaktualizowano Wiki.
+  wiki_edited_title: zostało zaktualizowane.
