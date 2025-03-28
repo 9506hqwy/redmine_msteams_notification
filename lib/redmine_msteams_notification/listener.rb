@@ -186,7 +186,7 @@ module RedmineMsteamsNotification
         old_assigned_to = find_attr_old_value(issue, 'assigned_to')
         if old_assigned_to
           old_assigned_to = set_mentioned_key(message, issue.project, old_assigned_to, mentioned)
-          facts[l(:field_assigned_to)] = "#{assigned_to} <- #{old_assigned_to}"
+          facts[l(:field_assigned_to)] = "#{assigned_to} from #{old_assigned_to}"
         else
           facts[l(:field_assigned_to)] = assigned_to
         end
@@ -199,7 +199,7 @@ module RedmineMsteamsNotification
         new_value = issue.send(attribute)
         if old_value
           facts[l_or_humanize(attribute, prefix: 'field_')] =
-            "#{format_object(new_value, false)} <- #{format_object(old_value, false)}"
+            "#{format_object(new_value, false)} from #{format_object(old_value, false)}"
         else
           facts[l_or_humanize(attribute, prefix: 'field_')] = format_object(new_value, false)
         end
@@ -212,7 +212,7 @@ module RedmineMsteamsNotification
             old_value = cv.value_was unless cv.value == cv.value_was
             old_value = format_value(old_value, cf) if old_value
             if old_value.present?
-              facts[cf.name] = "#{format_value(cv.value, cf)} <- #{old_value}"
+              facts[cf.name] = "#{format_value(cv.value, cf)} from #{old_value}"
             else
               facts[cf.name] = format_value(cv.value, cf)
             end

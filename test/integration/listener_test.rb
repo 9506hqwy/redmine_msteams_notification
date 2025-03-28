@@ -259,7 +259,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_edit_assigned_to_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Assignee\",\"value\":\"<at>miscuser8<\/at> <- Redmine Admin\"/)
+      .with(body: /\"title\":\"Assignee\",\"value\":\"<at>miscuser8<\/at> from Redmine Admin\"/)
 
     issue = issues(:issues_006)
     issue.assigned_to_id = 1
@@ -280,7 +280,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_edit_previous_assigned_to_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Assignee\",\"value\":\"John Smith <- <at>admin<\/at>\"/)
+      .with(body: /\"title\":\"Assignee\",\"value\":\"John Smith from <at>admin<\/at>\"/)
 
     issue = issues(:issues_006)
     issue.assigned_to_id = 1
@@ -301,7 +301,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_edit_project_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Project\",\"value\":\"eCookbook <- Private child of eCookbook\"/)
+      .with(body: /\"title\":\"Project\",\"value\":\"eCookbook from Private child of eCookbook\"/)
 
     log_user('admin', 'admin')
 
@@ -318,7 +318,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_edit_tracker_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Tracker\",\"value\":\"Feature request <- Bug\"/)
+      .with(body: /\"title\":\"Tracker\",\"value\":\"Feature request from Bug\"/)
 
     log_user('admin', 'admin')
 
@@ -335,7 +335,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_edit_priority_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Priority\",\"value\":\"Normal <- Low\"/)
+      .with(body: /\"title\":\"Priority\",\"value\":\"Normal from Low\"/)
 
     log_user('admin', 'admin')
 
@@ -352,7 +352,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_edit_status_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Status\",\"value\":\"Assigned <- New\"/)
+      .with(body: /\"title\":\"Status\",\"value\":\"Assigned from New\"/)
 
     log_user('admin', 'admin')
 
@@ -369,7 +369,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_edit_start_date
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Start date\",\"value\":\"\d{2}\/\d{2}\/\d{4} <- \d{2}\/\d{2}\/\d{4}\"/)
+      .with(body: /\"title\":\"Start date\",\"value\":\"\d{2}\/\d{2}\/\d{4} from \d{2}\/\d{2}\/\d{4}\"/)
 
     log_user('admin', 'admin')
 
@@ -386,7 +386,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_edit_due_date
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Due date\",\"value\":\"\d{2}\/\d{2}\/\d{4} <- \d{2}\/\d{2}\/\d{4}\"/)
+      .with(body: /\"title\":\"Due date\",\"value\":\"\d{2}\/\d{2}\/\d{4} from \d{2}\/\d{2}\/\d{4}\"/)
 
     log_user('admin', 'admin')
 
@@ -403,7 +403,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_bulk_edit_assigned_to_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Assignee\",\"value\":\"<at>miscuser8<\/at> <- Redmine Admin\"/)
+      .with(body: /\"title\":\"Assignee\",\"value\":\"<at>miscuser8<\/at> from Redmine Admin\"/)
 
     issue = issues(:issues_006)
     issue.assigned_to_id = 1
@@ -425,7 +425,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_bulk_edit_project_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Project\",\"value\":\"eCookbook <- Private child of eCookbook\"/)
+      .with(body: /\"title\":\"Project\",\"value\":\"eCookbook from Private child of eCookbook\"/)
 
     log_user('admin', 'admin')
 
@@ -443,7 +443,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_bulk_edit_tracker_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Tracker\",\"value\":\"Feature request <- Bug\"/)
+      .with(body: /\"title\":\"Tracker\",\"value\":\"Feature request from Bug\"/)
 
     log_user('admin', 'admin')
 
@@ -461,7 +461,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_bulk_edit_priority_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Priority\",\"value\":\"Normal <- Low\"/)
+      .with(body: /\"title\":\"Priority\",\"value\":\"Normal from Low\"/)
 
     log_user('admin', 'admin')
 
@@ -479,7 +479,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_bulk_edit_status_id
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Status\",\"value\":\"Assigned <- New\"/)
+      .with(body: /\"title\":\"Status\",\"value\":\"Assigned from New\"/)
 
     log_user('admin', 'admin')
 
@@ -497,7 +497,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_bulk_edit_start_date
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Start date\",\"value\":\"\d{2}\/\d{2}\/\d{4} <- \d{2}\/\d{2}\/\d{4}\"/)
+      .with(body: /\"title\":\"Start date\",\"value\":\"\d{2}\/\d{2}\/\d{4} from \d{2}\/\d{2}\/\d{4}\"/)
 
     log_user('admin', 'admin')
 
@@ -515,7 +515,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
   def test_issue_bulk_edit_due_date
     hook = stub_request(:post, 'https://localhost/test')
-      .with(body: /\"title\":\"Due date\",\"value\":\"\d{2}\/\d{2}\/\d{4} <- \d{2}\/\d{2}\/\d{4}\"/)
+      .with(body: /\"title\":\"Due date\",\"value\":\"\d{2}\/\d{2}\/\d{4} from \d{2}\/\d{2}\/\d{4}\"/)
 
     log_user('admin', 'admin')
 
