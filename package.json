@@ -1,0 +1,7 @@
+{
+  "name": "redmine_msteams_notification",
+  "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "@types/node": "^22.13.10"
+  }
+}
