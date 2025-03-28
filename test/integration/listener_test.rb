@@ -548,6 +548,27 @@ class HookListenerTest < Redmine::IntegrationTest
     assert_requested(hook)
   end
 
+  def test_wiki_edit_watcher
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Watcher\",\"value\":\"<at>dlopper<\/at>\"/)
+
+    page = Wiki.find(5).find_or_new_page('')
+    page.save!
+    page.watcher_users << User.find(3)
+
+    log_user('jsmith', 'jsmith')
+
+    put(
+      '/projects/private-child/wiki/Wiki',
+      params: {
+        content: {
+          text: "wiki content"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
   def test_wiki_edit_mention_mentioned
     skip unless Redmine::VERSION::MAJOR >= 5
 

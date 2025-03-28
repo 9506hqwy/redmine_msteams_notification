@@ -101,8 +101,11 @@ module RedmineMsteamsNotification
         l(:field_author) => author.name,
       }
 
+      mentioned = [author]
+      facts[l(:field_watcher)] = notified_watchers(message, page.project, page, mentioned)
+
       if Redmine::VERSION::MAJOR >= 5
-        facts[l(:field_mentioned)] = notified_mentions(message, page.project, page.content, [author])
+        facts[l(:field_mentioned)] = notified_mentions(message, page.project, page.content, mentioned)
       end
 
       message.add_open_uri(l(:msteams_card_action_open), page_url)
