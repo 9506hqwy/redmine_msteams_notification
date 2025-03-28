@@ -26,6 +26,7 @@ class HookListenerTest < Redmine::IntegrationTest
            :roles,
            :users,
            :trackers,
+           :watchers,
            :wikis,
            :wiki_contents,
            :wiki_pages,
@@ -165,6 +166,26 @@ class HookListenerTest < Redmine::IntegrationTest
   def test_issue_edit_subject_mention_author
     hook = stub_request(:post, 'https://localhost/test')
       .with(body: /\"title\":\"Author\",\"value\":\"<at>jsmith<\/at>\"/)
+
+    log_user('admin', 'admin')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          subject: "test issue"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_edit_subject_watcher
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Watcher\",\"value\":\"<at>dlopper<\/at>\"/)
+
+    issue = Issue.find(6)
+    issue.watcher_users << User.find(3)
 
     log_user('admin', 'admin')
 

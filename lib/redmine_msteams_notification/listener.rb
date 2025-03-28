@@ -25,13 +25,7 @@ module RedmineMsteamsNotification
       message.add_section(nil, link_to(issue_url), nil)
 
       Rails.logger.debug(message.get_json)
-      
-      issue.watcher_users.each do |watcher|
-        next if watcher == issue.author || watcher == issue.assigned_to
-        next unless user_mention_enable?(issue.project, watcher, [])
-        message.add_mention_for(issue.project, watcher)
-      end
-    
+
       send_message(message, issue.project.msteams_destination)
     end
 
@@ -61,12 +55,6 @@ module RedmineMsteamsNotification
 
       Rails.logger.debug(message.get_json)
 
-      issue.watcher_users.each do |watcher|
-        next if watcher == journal.user || watcher == issue.assigned_to
-        next unless user_mention_enable?(issue.project, watcher, [])
-        message.add_mention_for(issue.project, watcher)
-      end
-      
       send_message(message, issue.project.msteams_destination)
     end
 
@@ -90,12 +78,6 @@ module RedmineMsteamsNotification
 
       Rails.logger.debug(message.get_json)
 
-      issue.watcher_users.each do |watcher|
-        next if watcher == User.current || watcher == issue.assigned_to
-        next unless user_mention_enable?(issue.project, watcher, [])
-        message.add_mention_for(issue.project, watcher)
-      end
-      
       send_message(message, issue.project.msteams_destination)
     end
 
@@ -235,6 +217,8 @@ module RedmineMsteamsNotification
         end
       end
 
+      facts[l(:field_watcher)] = notified_watchers(message, issue.project, issue, mentioned)
+
       if Redmine::VERSION::MAJOR >= 5
         facts[l(:field_mentioned)] = notified_mentions(message, issue.project, issue, mentioned)
       end
@@ -244,6 +228,12 @@ module RedmineMsteamsNotification
 
     def notified_mentions(message, project, mentionable, mentioned)
       users = mentionable.mentioned_users.to_a
+      users.map! { |user| set_mentioned_key(message, project, user, mentioned) }
+      users.compact.join(',')
+    end
+
+    def notified_watchers(message, project, watchable, mentioned)
+      users = watchable.watcher_users.to_a
       users.map! { |user| set_mentioned_key(message, project, user, mentioned) }
       users.compact.join(',')
     end

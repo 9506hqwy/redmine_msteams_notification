@@ -89,6 +89,7 @@ module RedmineMsteamsNotification
     private
 
     def message
+      # https://adaptivecards.io/designer/
       # https://docs.microsoft.com/ja-jp/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using?tabs=PowerShell#send-adaptive-cards-using-an-incoming-webhook
       # https://docs.microsoft.com/ja-jp/microsoftteams/platform/task-modules-and-cards/cards/cards-format?tabs=adaptive-md%2Cconnector-html#user-mention-in-incoming-webhook-with-adaptive-cards
       content = {}
