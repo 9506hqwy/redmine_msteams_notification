@@ -44,6 +44,12 @@ class HookListenerTest < Redmine::IntegrationTest
     project.msteams_destination.mention_id_field_id = nil
     project.msteams_destination.user_mentioned_field_id = nil
     project.msteams_destination.save!
+
+    if Redmine::VERSION::MAJOR >= 5
+      admin = User.find(1)
+      admin.pref.auto_watch_on = []
+      admin.pref.save!
+    end
   end
 
   def teardown
