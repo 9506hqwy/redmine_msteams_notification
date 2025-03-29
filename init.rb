@@ -9,6 +9,7 @@ libraries =
     'redmine_msteams_notification/custom_field_patch',
     'redmine_msteams_notification/listener',
     'redmine_msteams_notification/message_card',
+    'redmine_msteams_notification/notifiable',
     'redmine_msteams_notification/projects_helper_patch',
     'redmine_msteams_notification/project_patch',
     'redmine_msteams_notification/user_patch',

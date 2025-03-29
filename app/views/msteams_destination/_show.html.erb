@@ -48,6 +48,23 @@
   </p>
 </div>
 
+<fieldset class="box tabular">
+  <legend><%= l(:label_msteams_notificaton_item) %></legend>
+
+  <%= hidden_field_tag('msteams_notification_item[]', '') %>
+
+  <!-- TODO: Add custom_field item -->
+  <% RedmineMsteamsNotification::Notifiable.all.each do |notifiable| %>
+    <label class="floating">
+      <%= check_box_tag('msteams_notification_item[]',
+                        notifiable.name,
+                        !destination.hidden_items&.include?(notifiable.name),
+                        :id => nil) %>
+      <%= l(notifiable.label) %>
+    </label>
+  <% end %>
+</fieldset>
+
 <div style="float:right">
   <a rel="nofollow" data-method="post" href="<%= test_url %>">
     <%= l(:submit_msteams_send_test_notification) %>

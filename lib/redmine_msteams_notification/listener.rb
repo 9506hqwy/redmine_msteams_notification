@@ -11,6 +11,8 @@ module RedmineMsteamsNotification
       return if issue.is_private
       return unless enable?(issue.project)
 
+      hidden_items = issue.project.msteams_destination.hidden_items || []
+
       summary = l(:issue_added_summary)
       title = sprintf('#%d %s (%s)', issue.id, l(:issue_added_title), issue.author.name)
       text = issue.event_title
@@ -21,8 +23,14 @@ module RedmineMsteamsNotification
       facts = new_facts(issue, message, [issue.author])
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
-      message.add_section(nil, nil, facts)
-      message.add_section(nil, link_to(issue_url), nil)
+
+      if facts.present?
+        message.add_section(nil, nil, facts)
+      end
+
+      unless hidden_items.include?('action_open_url')
+        message.add_section(nil, link_to(issue_url), nil)
+      end
 
       Rails.logger.debug(message.get_json)
 
@@ -37,6 +45,8 @@ module RedmineMsteamsNotification
       journal = context[:journal]
       return if journal.private_notes?
 
+      hidden_items = issue.project.msteams_destination.hidden_items || []
+
       summary = l(:issue_edited_summary)
       title = sprintf('#%d %s (%s)', issue.id, l(:issue_edited_title), journal.user.name)
       text = journal.event_title
@@ -49,9 +59,16 @@ module RedmineMsteamsNotification
       description = mentioned_text(message, issue.project, journal, journal.event_description, mentioned)
 
       message.add_open_uri(l(:msteams_card_action_open), journal_url)
-      message.add_section(nil, nil, facts)
+
+      if facts.present?
+        message.add_section(nil, nil, facts)
+      end
+
       message.add_section(nil, description, nil)
-      message.add_section(nil, link_to(journal_url), nil)
+
+      unless hidden_items.include?('action_open_url')
+        message.add_section(nil, link_to(journal_url), nil)
+      end
 
       Rails.logger.debug(message.get_json)
 
@@ -63,6 +80,8 @@ module RedmineMsteamsNotification
       return if issue.is_private
       return unless enable?(issue.project)
 
+      hidden_items = issue.project.msteams_destination.hidden_items || []
+
       summary = l(:issue_editing_summary)
       title = sprintf('#%d %s (%s)', issue.id, l(:issue_editing_title), User.current.name)
       text = issue.event_title
@@ -73,8 +92,14 @@ module RedmineMsteamsNotification
       facts = new_facts(issue, message, [User.current])
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
-      message.add_section(nil, nil, facts)
-      message.add_section(nil, link_to(issue_url), nil)
+
+      if facts.present?
+        message.add_section(nil, nil, facts)
+      end
+
+      unless hidden_items.include?('action_open_url')
+        message.add_section(nil, link_to(issue_url), nil)
+      end
 
       Rails.logger.debug(message.get_json)
 
@@ -84,6 +109,8 @@ module RedmineMsteamsNotification
     def controller_wiki_edit_after_save(context)
       page = context[:page]
       return unless enable?(page.project)
+
+      hidden_items = page.project.msteams_destination.hidden_items || []
 
       author = page.content.author
 
@@ -97,20 +124,30 @@ module RedmineMsteamsNotification
       card = page.project.msteams_destination.card_class
       message = card.new(summary, title, text)
 
-      facts = {
-        l(:field_author) => author.name,
-      }
+      facts = {}
+
+      unless hidden_items.include?('author')
+        facts[l(:field_author)] = author.name
+      end
 
       mentioned = [author]
-      facts[l(:field_watcher)] = notified_watchers(message, page.project, page, mentioned)
+      unless hidden_items.include?('watcher')
+        facts[l(:field_watcher)] = notified_watchers(message, page.project, page, mentioned)
+      end
 
-      if Redmine::VERSION::MAJOR >= 5
+      if Redmine::VERSION::MAJOR >= 5 && !hidden_items.include?('mentioned')
         facts[l(:field_mentioned)] = notified_mentions(message, page.project, page.content, mentioned)
       end
 
       message.add_open_uri(l(:msteams_card_action_open), page_url)
-      message.add_section(nil, nil, facts)
-      message.add_section(nil, link_to(page_url), nil)
+
+      if facts.present?
+        message.add_section(nil, nil, facts)
+      end
+
+      unless hidden_items.include?('action_open_url')
+        message.add_section(nil, link_to(page_url), nil)
+      end
 
       Rails.logger.debug(message.get_json)
 
@@ -171,16 +208,20 @@ module RedmineMsteamsNotification
     end
 
     def new_facts(issue, message, mentioned)
-      author = issue.author.name
-      if issue.author != issue.assigned_to
-        author = set_mentioned_key(message, issue.project, issue.author, mentioned)
+      hidden_items = issue.project.msteams_destination.hidden_items || []
+
+      facts = {}
+
+      unless hidden_items.include?('author')
+        author = issue.author.name
+        if issue.author != issue.assigned_to
+          author = set_mentioned_key(message, issue.project, issue.author, mentioned)
+        end
+
+        facts[l(:field_author)] = author
       end
 
-      facts = {
-        l(:field_author) => author,
-      }
-
-      unless issue.disabled_core_fields.include?(property_key('assigned_to'))
+      unless hidden_items.include?('assigned_to') || issue.disabled_core_fields.include?(property_key('assigned_to'))
         assigned_to = set_mentioned_key(message, issue.project, issue.assigned_to, mentioned)
 
         old_assigned_to = find_attr_old_value(issue, 'assigned_to')
@@ -193,6 +234,7 @@ module RedmineMsteamsNotification
       end
 
       %w(project tracker status priority start_date due_date).each do |attribute|
+        next if hidden_items.include?(attribute)
         next if issue.disabled_core_fields.include?(property_key(attribute))
 
         old_value = find_attr_old_value(issue, attribute)
@@ -220,9 +262,11 @@ module RedmineMsteamsNotification
         end
       end
 
-      facts[l(:field_watcher)] = notified_watchers(message, issue.project, issue, mentioned)
+      unless hidden_items.include?('watcher')
+        facts[l(:field_watcher)] = notified_watchers(message, issue.project, issue, mentioned)
+      end
 
-      if Redmine::VERSION::MAJOR >= 5
+      if Redmine::VERSION::MAJOR >= 5 && !hidden_items.include?('mentioned')
         facts[l(:field_mentioned)] = notified_mentions(message, issue.project, issue, mentioned)
       end
 

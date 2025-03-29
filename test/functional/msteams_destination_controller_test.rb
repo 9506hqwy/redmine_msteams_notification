@@ -132,6 +132,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       # msteams_skip_ssl_verify: false,
       msteams_mention_id_field_id: '',
       msteams_user_mentioned_field_id: '',
+      msteams_notification_item: [],
     }
 
     assert_redirected_to "/projects/#{project.identifier}/settings/msteams_notification"
@@ -155,12 +156,16 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       # msteams_skip_ssl_verify: false,
       msteams_mention_id_field_id: '',
       msteams_user_mentioned_field_id: '',
+      msteams_notification_item: [],
     }
 
     assert_response 403
   end
 
   def test_update_update
+    hidden_items = ['author']
+    enables = RedmineMsteamsNotification::Notifiable.all.map { |n| n.name } - hidden_items
+
     project = Project.find(5)
     project.enable_module!(:msteams_notification)
     put :update, params: {
@@ -170,6 +175,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       msteams_skip_ssl_verify: true,
       msteams_mention_id_field_id: '1',
       msteams_user_mentioned_field_id: '2',
+      msteams_notification_item: enables,
     }
 
     assert_redirected_to "/projects/#{project.identifier}/settings/msteams_notification"
@@ -182,5 +188,6 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
     assert_equal true, project.msteams_destination.skip_ssl_verify
     assert_equal 1, project.msteams_destination.mention_id_field_id
     assert_equal 2, project.msteams_destination.user_mentioned_field_id
+    assert_equal hidden_items, project.msteams_destination.hidden_items
   end
 end

@@ -12,4 +12,13 @@ class MsteamsDestination < RedmineMsteamsNotification::Utils::ModelBase
       RedmineMsteamsNotification::AdaptiveCard
     end
   end
+
+  def hidden_items
+    v = read_attribute(:hidden_items)
+    YAML.safe_load(v) if v
+  end
+
+  def hidden_items=(v)
+    write_attribute(:hidden_items, v.to_yaml.to_s)
+  end
 end

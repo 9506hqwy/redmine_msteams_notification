@@ -16,6 +16,7 @@ ja:
   label_msteams_destination: WebHook URL
   label_msteams_format: メッセージ形式
   label_msteams_mention_id_field: オブジェクト ID または UPN
+  label_msteams_notificaton_item: 通知項目
   label_msteams_skip_ssl_verify: SSLサーバ証明書の検証をスキップ
   label_msteams_user_mentioned_field: ユーザごとのメンション設定
   msteams_card_action_open: 開く

@@ -16,6 +16,7 @@ pl:
   label_msteams_destination: URL WebHook
   label_msteams_format: Format wiadomości
   label_msteams_mention_id_field: ID obiektu lub UPN
+  label_msteams_notificaton_item: Element powiadomienia
   label_msteams_skip_ssl_verify: Pomiń weryfikację certyfikatu SSL
   label_msteams_user_mentioned_field: Preferencje użytkownika
   msteams_card_action_open: Otwórz

@@ -35,6 +35,9 @@ class MsteamsDestinationController < ApplicationController
   end
 
   def update
+    enables = params[:msteams_notification_item] || []
+    hidden_items = RedmineMsteamsNotification::Notifiable.all.map { |n| n.name } - enables
+
     destination = @project.msteams_destination || MsteamsDestination.new
     destination.project = @project
     destination.url = params[:msteams_destination]
@@ -42,6 +45,7 @@ class MsteamsDestinationController < ApplicationController
     destination.skip_ssl_verify = params[:msteams_skip_ssl_verify].present?
     destination.mention_id_field_id = params[:msteams_mention_id_field_id]
     destination.user_mentioned_field_id = params[:msteams_user_mentioned_field_id]
+    destination.hidden_items = hidden_items.presence
 
     if destination.save
       flash[:notice] = l(:notice_successful_update)

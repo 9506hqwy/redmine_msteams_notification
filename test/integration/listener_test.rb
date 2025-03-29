@@ -74,6 +74,298 @@ class HookListenerTest < Redmine::IntegrationTest
     assert_requested(hook)
   end
 
+  def test_issue_add_hidden_author
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Author\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['author']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8
+          }
+        })
+    end
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
+  def test_issue_add_hidden_assigned_to
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Assignee\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['assigned_to']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8
+          }
+        })
+    end
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
+  def test_issue_add_hidden_project
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Project\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['project']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8
+          }
+        })
+    end
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
+  def test_issue_add_hidden_tracker
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Tracker\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['tracker']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8
+          }
+        })
+    end
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
+  def test_issue_add_hidden_status
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Status\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['status']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8
+          }
+        })
+    end
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
+  def test_issue_add_hidden_priority
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Priority\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['priority']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8
+          }
+        })
+    end
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
+  def test_issue_add_hidden_start_date
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Start date\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['start_date']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8
+          }
+        })
+    end
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
+  def test_issue_add_hidden_due_date
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Due date\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['due_date']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8
+          }
+        })
+    end
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
+  def test_issue_add_hidden_watcher
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Watcher\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['watcher']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8
+          }
+        })
+    end
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
+  def test_issue_add_hidden_mentioned
+    skip unless Redmine::VERSION::MAJOR >= 5
+
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Mentioned\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['mentioned']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8
+          }
+        })
+    end
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
   def test_issue_add_mention_assigned_to
     hook = stub_request(:post, 'https://localhost/test')
       .with(body: /\"title\":\"Assignee\",\"value\":\"<at>miscuser8<\/at>\"/)
@@ -546,6 +838,77 @@ class HookListenerTest < Redmine::IntegrationTest
       })
 
     assert_requested(hook)
+  end
+
+  def test_wiki_edit_hidden_author
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Author\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['author']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    put(
+      '/projects/private-child/wiki/Wiki',
+      params: {
+        content: {
+          text: "wiki content"
+        }
+      })
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
+  def test_wiki_edit_hidden_watcher
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Watcher\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['watcher']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    put(
+      '/projects/private-child/wiki/Wiki',
+      params: {
+        content: {
+          text: "wiki content"
+        }
+      })
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
+  def test_wiki_edit_hidden_mentioned
+    skip unless Redmine::VERSION::MAJOR >= 5
+
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"title\":\"Mentioned\",/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['mentioned']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    put(
+      '/projects/private-child/wiki/Wiki',
+      params: {
+        content: {
+          text: "wiki content"
+        }
+      })
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
   end
 
   def test_wiki_edit_watcher
