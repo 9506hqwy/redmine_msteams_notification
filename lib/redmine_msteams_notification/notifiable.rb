@@ -14,6 +14,8 @@ module RedmineMsteamsNotification
       notifications << Notifiable.new('start_date', 'field_start_date')
       notifications << Notifiable.new('due_date', 'field_due_date')
       notifications << Notifiable.new('watcher', 'field_watcher')
+      notifications << Notifiable.new('description', 'field_description')
+      notifications << Notifiable.new('notes', 'field_notes')
 
       if Redmine::VERSION::MAJOR >= 5
         notifications << Notifiable.new('mentioned', 'field_mentioned')

@@ -72,7 +72,8 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 8
+            assigned_to_id: 8,
+            description: "test description"
           }
         })
     end
@@ -100,7 +101,8 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 8
+            assigned_to_id: 8,
+            description: "test description"
           }
         })
     end
@@ -129,7 +131,8 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 8
+            assigned_to_id: 8,
+            description: "test description"
           }
         })
     end
@@ -158,7 +161,8 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 8
+            assigned_to_id: 8,
+            description: "test description"
           }
         })
     end
@@ -187,7 +191,8 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 8
+            assigned_to_id: 8,
+            description: "test description"
           }
         })
     end
@@ -216,7 +221,8 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 8
+            assigned_to_id: 8,
+            description: "test description"
           }
         })
     end
@@ -245,7 +251,8 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 8
+            assigned_to_id: 8,
+            description: "test description"
           }
         })
     end
@@ -274,7 +281,8 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 8
+            assigned_to_id: 8,
+            description: "test description"
           }
         })
     end
@@ -303,7 +311,8 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 8
+            assigned_to_id: 8,
+            description: "test description"
           }
         })
     end
@@ -332,7 +341,38 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 8
+            assigned_to_id: 8,
+            description: "test description"
+          }
+        })
+    end
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
+  end
+
+  def test_issue_add_hidden_description
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"text\":\"test description\"/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['description']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8,
+            description: "test description"
           }
         })
     end
@@ -363,7 +403,8 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 8
+            assigned_to_id: 8,
+            description: "test description"
           }
         })
     end
@@ -387,7 +428,8 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 8
+            assigned_to_id: 8,
+            description: "test description"
           }
         })
     end
@@ -410,7 +452,8 @@ class HookListenerTest < Redmine::IntegrationTest
             start_date: '2000-01-01',
             priority_id: "5",
             subject: "test issue",
-            assigned_to_id: 2
+            assigned_to_id: 2,
+            description: "test description"
           }
         })
     end
@@ -515,6 +558,29 @@ class HookListenerTest < Redmine::IntegrationTest
       })
 
     assert_requested(hook)
+  end
+
+  def test_issue_edit_notes
+    hook = stub_request(:post, 'https://localhost/test')
+    hook_hidden = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"text\":\"test notes"/)
+
+    project = Project.find(5)
+    project.msteams_destination.hidden_items = ['notes']
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          notes: "test notes"
+        }
+      })
+
+    assert_requested(hook)
+    assert_not_requested(hook_hidden)
   end
 
   def test_issue_edit_notes_mention_mentioned

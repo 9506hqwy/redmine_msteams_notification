@@ -20,12 +20,18 @@ module RedmineMsteamsNotification
 
       card  = issue.project.msteams_destination.card_class
       message = card.new(summary, title, text)
-      facts = new_facts(issue, message, [issue.author])
+      mentioned = [issue.author]
+      facts = new_facts(issue, message, mentioned)
+      description = mentioned_text(message, issue.project, issue, issue.event_description, mentioned)
 
       message.add_open_uri(l(:msteams_card_action_open), issue_url)
 
       if facts.present?
         message.add_section(nil, nil, facts)
+      end
+
+      unless hidden_items.include?('description')
+        message.add_section(nil, description, nil)
       end
 
       unless hidden_items.include?('action_open_url')
@@ -64,7 +70,9 @@ module RedmineMsteamsNotification
         message.add_section(nil, nil, facts)
       end
 
-      message.add_section(nil, description, nil)
+      unless hidden_items.include?('notes')
+        message.add_section(nil, description, nil)
+      end
 
       unless hidden_items.include?('action_open_url')
         message.add_section(nil, link_to(journal_url), nil)
