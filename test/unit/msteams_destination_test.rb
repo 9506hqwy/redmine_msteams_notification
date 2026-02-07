@@ -17,6 +17,7 @@ class MsteamsDestinationTest < ActiveSupport::TestCase
     d.skip_ssl_verify = true
     d.mention_id_field_id = nil
     d.user_mentioned_field_id = nil
+    d.text_max_length = 0
     d.hidden_items = nil
     d.save!
 
@@ -27,6 +28,7 @@ class MsteamsDestinationTest < ActiveSupport::TestCase
     assert_equal true, d.skip_ssl_verify
     assert_nil d.mention_id_field_id
     assert_nil d.user_mentioned_field_id
+    assert_equal 0, d.text_max_length
     assert_nil d.hidden_items
     assert_equal RedmineMsteamsNotification::AdaptiveCard, d.card_class
   end
@@ -40,6 +42,7 @@ class MsteamsDestinationTest < ActiveSupport::TestCase
     d.skip_ssl_verify = false
     d.mention_id_field_id = 1
     d.user_mentioned_field_id = 2
+    d.text_max_length = 1024
     d.hidden_items = ['author']
     d.save!
 
@@ -49,6 +52,7 @@ class MsteamsDestinationTest < ActiveSupport::TestCase
     assert_equal false, d.skip_ssl_verify
     assert_equal 1, d.mention_id_field_id
     assert_equal 2, d.user_mentioned_field_id
+    assert_equal 1024, d.text_max_length
     assert_equal ['author'], d.hidden_items
     assert_equal RedmineMsteamsNotification::MessageCard, d.card_class
   end

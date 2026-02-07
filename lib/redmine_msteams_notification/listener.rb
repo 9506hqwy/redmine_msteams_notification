@@ -31,6 +31,7 @@ module RedmineMsteamsNotification
       end
 
       unless hidden_items.include?('description')
+        description = truncate_text(description, issue.project)
         message.add_section(nil, description, nil)
       end
 
@@ -71,6 +72,7 @@ module RedmineMsteamsNotification
       end
 
       unless hidden_items.include?('notes')
+        description = truncate_text(description, issue.project)
         message.add_section(nil, description, nil)
       end
 
@@ -340,6 +342,11 @@ module RedmineMsteamsNotification
       return false if mentioned.include?(user)
 
       user.msteams_mentioned_enable?(project.msteams_destination)
+    end
+
+    def truncate_text(text, project)
+      text_max_length = project.msteams_destination.text_max_length
+      text.truncate(text_max_length + 4, omission: ' ...')
     end
   end
 end

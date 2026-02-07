@@ -132,6 +132,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       # msteams_skip_ssl_verify: false,
       msteams_mention_id_field_id: '',
       msteams_user_mentioned_field_id: '',
+      msteams_text_max_length: 0,
       msteams_notification_item: [],
     }
 
@@ -143,6 +144,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
     assert_empty project.msteams_destination.url
     assert_empty project.msteams_destination.format
     assert_equal false, project.msteams_destination.skip_ssl_verify
+    assert_equal 0, project.msteams_destination.text_max_length
     assert_nil project.msteams_destination.mention_id_field_id
   end
 
@@ -156,6 +158,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       # msteams_skip_ssl_verify: false,
       msteams_mention_id_field_id: '',
       msteams_user_mentioned_field_id: '',
+      msteams_text_max_length: 1024,
       msteams_notification_item: [],
     }
 
@@ -175,6 +178,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
       msteams_skip_ssl_verify: true,
       msteams_mention_id_field_id: '1',
       msteams_user_mentioned_field_id: '2',
+      msteams_text_max_length: 1024,
       msteams_notification_item: enables,
     }
 
@@ -188,6 +192,7 @@ class MsteamsDestinationControllerTest < Redmine::ControllerTest
     assert_equal true, project.msteams_destination.skip_ssl_verify
     assert_equal 1, project.msteams_destination.mention_id_field_id
     assert_equal 2, project.msteams_destination.user_mentioned_field_id
+    assert_equal 1024, project.msteams_destination.text_max_length
     assert_equal hidden_items, project.msteams_destination.hidden_items
   end
 end

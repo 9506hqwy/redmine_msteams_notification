@@ -81,6 +81,34 @@ class HookListenerTest < Redmine::IntegrationTest
     assert_requested(hook)
   end
 
+  def test_issue_description_truncated
+    hook_ = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"text\":\"te ...\"/)
+
+    project = Project.find(5)
+    project.msteams_destination.text_max_length = 2
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    new_record(Issue) do
+      post(
+        '/projects/private-child/issues',
+        params: {
+          issue: {
+            tracker_id: '1',
+            start_date: '2000-01-01',
+            priority_id: "5",
+            subject: "test issue",
+            assigned_to_id: 8,
+            description: "test description"
+          }
+        })
+    end
+
+    assert_requested(hook_)
+  end
+
   def test_issue_add_hidden_author
     hook = stub_request(:post, 'https://localhost/test')
     hook_hidden = stub_request(:post, 'https://localhost/test')
@@ -554,6 +582,27 @@ class HookListenerTest < Redmine::IntegrationTest
       params: {
         issue: {
           description: "@admin"
+        }
+      })
+
+    assert_requested(hook)
+  end
+
+  def test_issue_edit_notes_truncated
+    hook = stub_request(:post, 'https://localhost/test')
+      .with(body: /\"text\":\"te ..."/)
+
+    project = Project.find(5)
+    project.msteams_destination.text_max_length = 2
+    project.msteams_destination.save!
+
+    log_user('jsmith', 'jsmith')
+
+    put(
+      '/issues/6',
+      params: {
+        issue: {
+          notes: "test notes"
         }
       })
 

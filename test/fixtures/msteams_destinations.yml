@@ -5,6 +5,7 @@ msteams_destinations_001:
   skip_ssl_verify: false
   mention_id_field_id:
   user_mentioned_field_id:
+  text_max_length: 512
   hidden_items:
 msteams_destinations_002:
   project_id: 5
@@ -13,4 +14,5 @@ msteams_destinations_002:
   skip_ssl_verify: true
   mention_id_field_id: 4
   user_mentioned_field_id: 5
+  text_max_length: 512
   hidden_items: []

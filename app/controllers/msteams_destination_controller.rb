@@ -45,6 +45,7 @@ class MsteamsDestinationController < ApplicationController
     destination.skip_ssl_verify = params[:msteams_skip_ssl_verify].present?
     destination.mention_id_field_id = params[:msteams_mention_id_field_id]
     destination.user_mentioned_field_id = params[:msteams_user_mentioned_field_id]
+    destination.text_max_length = params[:msteams_text_max_length].to_i
     destination.hidden_items = hidden_items.presence
 
     if destination.save

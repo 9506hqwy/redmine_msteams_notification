@@ -46,6 +46,10 @@
   <p>
     <%= l(:hint_msteams_user_mentioned_field) %>
   </p>
+  <p>
+    <label><%= l(:field_text) %> (length):</label>
+    <input name="msteams_text_max_length" type="number" style="width: 100%" value="<%= destination.text_max_length %>" />
+  </p>
 </div>
 
 <fieldset class="box tabular">
