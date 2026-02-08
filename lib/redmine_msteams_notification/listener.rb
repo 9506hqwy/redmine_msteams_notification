@@ -6,7 +6,7 @@ module RedmineMsteamsNotification
     include ApplicationHelper
     include CustomFieldsHelper
 
-    def controller_issues_new_after_save(context)
+    def redmine_msteams_notification_issues_new_after_save(context)
       issue = context[:issue]
       return if issue.is_private
       return unless enable?(issue.project)
