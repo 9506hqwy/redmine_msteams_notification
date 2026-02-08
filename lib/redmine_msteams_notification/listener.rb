@@ -44,7 +44,7 @@ module RedmineMsteamsNotification
       send_message(message, issue.project.msteams_destination)
     end
 
-    def controller_issues_edit_after_save(context)
+    def redmine_msteams_notification_issues_edit_after_save(context)
       issue = context[:issue]
       return if issue.is_private
       return unless enable?(issue.project)
@@ -78,37 +78,6 @@ module RedmineMsteamsNotification
 
       unless hidden_items.include?('action_open_url')
         message.add_section(nil, link_to(journal_url), nil)
-      end
-
-      Rails.logger.debug(message.get_json)
-
-      send_message(message, issue.project.msteams_destination)
-    end
-
-    def controller_issues_bulk_edit_before_save(context)
-      issue = context[:issue]
-      return if issue.is_private
-      return unless enable?(issue.project)
-
-      hidden_items = issue.project.msteams_destination.hidden_items || []
-
-      summary = l(:issue_editing_summary)
-      title = sprintf('#%d %s (%s)', issue.id, l(:issue_editing_title), User.current.name)
-      text = issue.event_title
-      issue_url = object_url(issue)
-
-      card  = issue.project.msteams_destination.card_class
-      message = card.new(summary, title, text)
-      facts = new_facts(issue, message, [User.current])
-
-      message.add_open_uri(l(:msteams_card_action_open), issue_url)
-
-      if facts.present?
-        message.add_section(nil, nil, facts)
-      end
-
-      unless hidden_items.include?('action_open_url')
-        message.add_section(nil, link_to(issue_url), nil)
       end
 
       Rails.logger.debug(message.get_json)
@@ -345,6 +314,8 @@ module RedmineMsteamsNotification
     end
 
     def truncate_text(text, project)
+      return if text.nil?
+
       text_max_length = project.msteams_destination.text_max_length
       text.truncate(text_max_length + 4, omission: ' ...')
     end

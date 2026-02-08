@@ -674,6 +674,7 @@ class HookListenerTest < Redmine::IntegrationTest
     hook = stub_request(:post, 'https://localhost/test')
       .with(body: /\"title\":\"Assignee\",\"value\":\"<at>miscuser8<\/at> from Redmine Admin\"/)
 
+    # Notes: Fire `redmine_msteams_notification_issues_edit_after_save` without journal.
     issue = issues(:issues_006)
     issue.assigned_to_id = 1
     issue.save!
@@ -695,6 +696,7 @@ class HookListenerTest < Redmine::IntegrationTest
     hook = stub_request(:post, 'https://localhost/test')
       .with(body: /\"title\":\"Assignee\",\"value\":\"John Smith from <at>admin<\/at>\"/)
 
+    # Notes: Fire `redmine_msteams_notification_issues_edit_after_save` without journal.
     issue = issues(:issues_006)
     issue.assigned_to_id = 1
     issue.save!
@@ -803,6 +805,7 @@ class HookListenerTest < Redmine::IntegrationTest
 
     log_user('admin', 'admin')
 
+    # Notes: `due_date` is future.
     put(
       '/issues/6',
       params: {
@@ -818,6 +821,7 @@ class HookListenerTest < Redmine::IntegrationTest
     hook = stub_request(:post, 'https://localhost/test')
       .with(body: /\"title\":\"Assignee\",\"value\":\"<at>miscuser8<\/at> from Redmine Admin\"/)
 
+    # Notes: Fire `redmine_msteams_notification_issues_edit_after_save` without journal.
     issue = issues(:issues_006)
     issue.assigned_to_id = 1
     issue.save!
@@ -932,12 +936,13 @@ class HookListenerTest < Redmine::IntegrationTest
 
     log_user('admin', 'admin')
 
+    # Notes: `due_date` is future.
     post(
       '/issues/bulk_update',
       params: {
         id: 6,
         issue: {
-          due_date: "2023-01-01"
+          due_date: "3000-01-01"
         }
       })
 
